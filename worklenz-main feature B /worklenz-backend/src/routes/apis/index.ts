@@ -1,0 +1,210 @@
+import express from "express";
+
+import AccessControlsController from "../../controllers/access-controls-controller";
+import AuthController from "../../controllers/auth-controller";
+import LogsController from "../../controllers/logs-controller";
+import OverviewController from "../../controllers/overview-controller";
+import TaskPrioritiesController from "../../controllers/task-priorities-controller";
+import ProjectPrioritiesController from "../../controllers/project-priorities-controller";
+
+import attachmentsApiRouter from "./attachments-api-router";
+import clientsApiRouter from "./clients-api-router";
+import jobTitlesApiRouter from "./job-titles-api-router";
+import notificationsApiRouter from "./notifications-api-router";
+import personalOverviewApiRouter from "./personal-overview-api-router";
+import projectMembersApiRouter from "./project-members-api-router";
+import projectsApiRouter from "./projects-api-router";
+import settingsApiRouter from "./settings-api-router";
+import statusesApiRouter from "./statuses-api-router";
+import subTasksApiRouter from "./sub-tasks-api-router";
+import taskCommentsApiRouter from "./task-comments-api-router";
+import taskDuplicateApiRouter from "./task-duplicate-api-router";
+import taskWorkLogApiRouter from "./task-work-log-api-router";
+import tasksApiRouter from "./tasks-api-router";
+import teamMembersApiRouter from "./team-members-api-router";
+import teamManagementApiRouter from "./team-management-api-router";
+import teamLeadReportsApiRouter from "./team-lead-reports-api-router";
+import teamsApiRouter from "./teams-api-router";
+import timezonesApiRouter from "./timezones-api-router";
+import todoListApiRouter from "./todo-list-api-router";
+import projectStatusesApiRouter from "./project-statuses-api-router";
+import labelsApiRouter from "./labels-api-router";
+import sharedProjectsApiRouter from "./shared-projects-api-router";
+import resourceAllocationApiRouter from "./resource-allocation-api-router";
+import taskTemplatesApiRouter from "./task-templates-api-router";
+import projectInsightsApiRouter from "./project-insights-api-router";
+import adminCenterApiRouter from "./admin-center-api-router";
+import reportingApiRouter from "./reporting-api-router";
+import teamLeadReportingApiRouter from "./team-lead-reporting-api-router";
+import activityLogsApiRouter from "./activity-logs-api-router";
+import safeControllerFunction from "../../shared/safe-controller-function";
+import passwordValidator from "../../middlewares/validators/password-validator";
+import projectFoldersApiRouter from "./project-folders-api-router";
+import taskPhasesApiRouter from "./task-phases-api-router";
+import projectCategoriesApiRouter from "./project-categories-api-router";
+import homePageApiRouter from "./home-page-api-router";
+import projectRoadmapApiRouter from "./roadmap-api-router";
+import projectCommentsApiRouter from "./project-comments-api-router";
+import projectCommentReactionsApiRouter from "./project-comment-reactions-api-router";
+import reportingExportApiRouter from "./reporting-export-api-router";
+import projectHealthsApiRouter from "./project-healths-api-router";
+import ptTasksApiRouter from "./pt-tasks-api-router";
+import projectTemplatesApiRouter from "./project-templates-api";
+import ptTaskPhasesApiRouter from "./pt_task-phases-api-router";
+import ptStatusesApiRouter from "./pt-statuses-api-router";
+import workloadApiRouter from "./gannt-apis/workload-api-router";
+import roadmapGanttApiRouter from "./gannt-apis/roadmap-api-router";
+import scheduleApiRouter from "./gannt-apis/schedule-api-router";
+import scheduleApiV2Router from "./gannt-apis/schedule-api-v2-router";
+import projectManagerApiRouter from "./project-managers-api-router";
+import surveyApiRouter from "./survey-api-router";
+
+import billingApiRouter from "../../ee/routes/apis/billing-api-router";
+import planTrialApiRouter from "../../ee/routes/apis/plan-trial-api-router";
+import taskDependenciesApiRouter from "./task-dependencies-api-router";
+
+import taskRecurringApiRouter from "./task-recurring-api-router";
+import teamFilesApiRouter from "./team-files-api-router";
+
+import customColumnsApiRouter from "./custom-columns-api-router";
+import projectFinanceApiRouter from "../../ee/routes/apis/project-finance-api-router";
+import projectRatecardApiRouter from "../../ee/routes/apis/project-ratecard-api-router";
+import ratecardApiRouter from "../../ee/routes/apis/ratecard-api-router";
+import holidayApiRouter from "./holiday-api-router";
+import userActivityLogsApiRouter from "./user-activity-logs-api-router";
+import supportApiRouter from "./support-api-router";
+import accountApiRouter from "./account-api-router";
+import planRecommendationApiRouter from "./plan-recommendation-api-router";
+import migrationApiRouter from "./migration-api-router";
+import subscriptionsApiRouter from "../../ee/routes/apis/subscriptions-api-router";
+import plansApiRouter from "./plans-api-router";
+import usersApiRouter from "./users-api-router";
+import clientPortalApiRouter from "../../ee/routes/apis/client-portal-api-router";
+import slackApiRouter from "../../ee/routes/apis/slack-api-router";
+import onboardingApiRouter from "./onboarding-api-router";
+import importsApiRouter from "./imports-api-router";
+import digestApiRouter from "./digest-api-router";
+import DigestPreferencesController from "../../controllers/digest-preferences-controller";
+import financeOverviewApiRouter from "./finance-overview-api-router";
+
+const api = express.Router();
+
+api.use("/projects", projectsApiRouter);
+api.use("/team-members", teamMembersApiRouter);
+api.use("/team-management", teamManagementApiRouter);
+api.use("/team-lead-reports", teamLeadReportsApiRouter);
+api.use("/job-titles", jobTitlesApiRouter);
+api.use("/clients", clientsApiRouter);
+api.use("/teams", teamsApiRouter);
+api.use("/tasks", tasksApiRouter);
+api.use("/settings", settingsApiRouter);
+api.use("/personal-overview", personalOverviewApiRouter);
+api.use("/statuses", statusesApiRouter);
+api.use("/todo-list", todoListApiRouter);
+api.use("/notifications", notificationsApiRouter);
+api.use("/attachments", attachmentsApiRouter);
+api.use("/sub-tasks", subTasksApiRouter);
+api.use("/project-members", projectMembersApiRouter);
+api.use("/task-time-log", taskWorkLogApiRouter);
+api.use("/task-comments", taskCommentsApiRouter);
+api.use("/task-duplicate", taskDuplicateApiRouter);
+api.use("/timezones", timezonesApiRouter);
+api.use("/project-statuses", projectStatusesApiRouter);
+api.use("/labels", labelsApiRouter);
+api.use("/resource-allocation", resourceAllocationApiRouter);
+api.use("/shared/projects", sharedProjectsApiRouter);
+api.use("/task-templates", taskTemplatesApiRouter);
+api.use("/project-insights", projectInsightsApiRouter);
+api.use("/admin-center", adminCenterApiRouter);
+api.use("/reporting", reportingApiRouter);
+api.use("/reporting", teamLeadReportingApiRouter);
+api.use("/activity-logs", activityLogsApiRouter);
+api.use("/projects-folders", projectFoldersApiRouter);
+api.use("/task-phases", taskPhasesApiRouter);
+api.use("/project-categories", projectCategoriesApiRouter);
+api.use("/home", homePageApiRouter);
+api.use("/roadmap", projectRoadmapApiRouter);
+api.use("/project-comments", projectCommentsApiRouter);
+api.use("/project-comment-reactions", projectCommentReactionsApiRouter);
+api.use("/reporting-export", reportingExportApiRouter);
+api.use("/project-healths", projectHealthsApiRouter);
+api.use("/project-templates", projectTemplatesApiRouter);
+api.use("/pt-tasks", ptTasksApiRouter);
+api.use("/pt-task-phases", ptTaskPhasesApiRouter);
+api.use("/pt-statuses", ptStatusesApiRouter);
+api.use("/workload-gannt", workloadApiRouter);
+api.use("/roadmap-gannt", roadmapGanttApiRouter);
+api.use("/schedule-gannt", scheduleApiRouter);
+api.use("/schedule-gannt-v2", scheduleApiV2Router);
+api.use("/project-managers", projectManagerApiRouter);
+api.use("/surveys", surveyApiRouter);
+api.use("/onboarding", onboardingApiRouter);
+api.use("/finance-overview", financeOverviewApiRouter);
+
+api.get("/overview/:id", safeControllerFunction(OverviewController.getById));
+api.get(
+  "/task-priorities",
+  safeControllerFunction(TaskPrioritiesController.get)
+);
+api.get(
+  "/project-priorities",
+  safeControllerFunction(ProjectPrioritiesController.get)
+);
+api.get(
+  "/project-priorities/:id",
+  safeControllerFunction(ProjectPrioritiesController.getById)
+);
+api.post(
+  "/change-password",
+  passwordValidator,
+  safeControllerFunction(AuthController.changePassword)
+);
+api.get(
+  "/access-controls/roles",
+  safeControllerFunction(AccessControlsController.getRoles)
+);
+api.get(
+  "/logs/my-dashboard",
+  safeControllerFunction(LogsController.getActivityLog)
+);
+
+api.use("/billing", billingApiRouter);
+api.use("/plan-trials", planTrialApiRouter);
+api.use("/task-dependencies", taskDependenciesApiRouter);
+
+api.use("/task-recurring", taskRecurringApiRouter);
+api.use("/team-files", teamFilesApiRouter);
+
+api.use("/custom-columns", customColumnsApiRouter);
+api.use("/support", supportApiRouter);
+api.use("/account", accountApiRouter);
+
+api.use("/project-finance", projectFinanceApiRouter);
+
+api.use("/project-ratecard", projectRatecardApiRouter);
+
+api.use("/ratecard", ratecardApiRouter);
+
+api.use("/holidays", holidayApiRouter);
+
+api.use("/logs", userActivityLogsApiRouter);
+
+api.use("/plan-recommendations", planRecommendationApiRouter);
+
+// Migration and subscription management APIs
+api.use("/migration", migrationApiRouter);
+api.use("/subscriptions", subscriptionsApiRouter);
+api.use("/plans", plansApiRouter);
+api.use("/users", usersApiRouter);
+api.use("/imports", importsApiRouter);
+
+// Client portal APIs
+api.use("/client-portal", clientPortalApiRouter);
+
+// Slack integration APIs
+api.use("/slack", slackApiRouter);
+
+// Digest preferences (auth required)
+api.use("/digest", digestApiRouter);
+
+export default api;

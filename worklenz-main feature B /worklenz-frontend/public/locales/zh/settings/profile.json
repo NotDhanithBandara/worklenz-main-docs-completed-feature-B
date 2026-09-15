@@ -1,0 +1,23 @@
+{
+  "uploadError": "您只能上传JPG/PNG文件！",
+  "uploadSizeError": "图片必须小于2MB！",
+  "upload": "上传",
+  "nameLabel": "名称",
+  "nameRequiredError": "名称是必需的",
+  "emailLabel": "电子邮件",
+  "emailRequiredError": "电子邮件是必需的",
+  "saveChanges": "保存更改",
+  "save": "保存",
+  "profileJoinedText": "加入于 {{date}}",
+  "profileLastUpdatedText": "最后更新于 {{date}}",
+  "avatarTooltip": "点击上传头像",
+  "removeAvatar": "移除照片",
+  "removeAvatarConfirmTitle": "移除个人资料照片？",
+  "removeAvatarConfirmDescription": "您的头像将被移除，并改为显示您的姓名首字母。",
+  "cancel": "取消",
+  "justNow": "刚刚",
+  "cropProfilePicture": "裁剪个人资料图片",
+  "title": "个人资料设置",
+  "nameMinLengthError": "姓名至少需要 2 个字符",
+  "nameMaxLengthError": "姓名不能超过 50 个字符"
+}

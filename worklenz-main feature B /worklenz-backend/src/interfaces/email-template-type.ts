@@ -1,0 +1,23 @@
+export enum IEmailTemplateType {
+  None,
+  NewSubscriber,
+  TeamMemberInvitation,
+  UnregisteredTeamMemberInvitation,
+  PasswordChange,
+  Welcome,
+  OTPVerification,
+  ResetPassword,
+  ResetPasswordClientPortal,
+  TaskAssigneeChange,
+  DailyDigest,
+  TaskDone,
+  ProjectDailyDigest,
+  TaskComment,
+  ProjectComment,
+  ClientInvitation,
+  ClientPortalNewRequest,
+  ClientPortalRequestComment,
+  DailyTaskReminder,
+  WeeklyStartSummary,
+  WeeklyEndSummary
+}

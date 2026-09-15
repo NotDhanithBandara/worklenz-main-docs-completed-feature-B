@@ -1,0 +1,81 @@
+{
+  "overviewTab": "Übersicht",
+  "membersTab": "Mitglieder",
+  "tasksTab": "Aufgaben",
+  "overview": {
+    "title": "Übersicht",
+    "statusOverview": "Statusübersicht",
+    "priorityOverview": "Prioritätenübersicht",
+    "lastUpdatedTasks": "Zuletzt aktualisierte Aufgaben"
+  },
+  "members": {
+    "title": "Mitglieder",
+    "tooltip": "Mitglieder",
+    "tasksByMembers": "Aufgaben nach Mitgliedern",
+    "tasksByMembersTooltip": "Aufgaben nach Mitgliedern",
+    "name": "Name",
+    "taskCount": "Anzahl Aufgaben",
+    "contribution": "Beitrag",
+    "completed": "Abgeschlossen",
+    "incomplete": "Unvollständig",
+    "overdue": "Überfällig",
+    "progress": "Fortschritt"
+  },
+  "tasks": {
+    "overdueTasks": "Überfällige Aufgaben",
+    "overLoggedTasks": "Aufgaben mit zu viel erfasster Zeit",
+    "tasksCompletedEarly": "Vorzeitig abgeschlossene Aufgaben",
+    "tasksCompletedLate": "Verspätet abgeschlossene Aufgaben",
+    "overLoggedTasksTooltip": "Aufgaben, bei denen mehr Zeit erfasst wurde als geschätzt",
+    "overdueTasksTooltip": "Aufgaben, deren Fälligkeitsdatum überschritten wurde"
+  },
+  "projectDeadline": {
+    "title": "Projektdeadline",
+    "overdueTasksHours": "Überfällige Aufgaben (Stunden)",
+    "overdueTasksHoursTooltip": "Aufgaben, bei denen mehr Zeit erfasst wurde als das Projektenddatum",
+    "overdueTasks": "Überfällige Aufgaben",
+    "overdueTasksTooltip": "Aufgaben, die das Projektenddatum überschritten haben"
+  },
+  "priorityChart": {
+    "priorityAxis": "Priorität",
+    "taskCountAxis": "Aufgabenanzahl",
+    "tasks": "Aufgaben",
+    "taskCount": "Aufgabe",
+    "noPriority": "Keine Priorität",
+    "low": "Niedrig",
+    "medium": "Mittel",
+    "high": "Hoch",
+    "critical": "Kritisch"
+  },
+  "memberStats": {
+    "projectMembers": "Projektmitglieder",
+    "assigneesWithOverdueTasks": "Zuweisungen mit überfälligen Aufgaben",
+    "unassignedMembers": "Nicht zugewiesene Mitglieder"
+  },
+  "common": {
+    "seeAll": "Alle anzeigen",
+    "totalLoggedHours": "Gesamterfasste Stunden",
+    "totalEstimation": "Gesamtschätzung",
+    "completedTasks": "Abgeschlossene Aufgaben",
+    "incompleteTasks": "Unvollständige Aufgaben",
+    "overdueTasks": "Überfällige Aufgaben",
+    "overdueTasksTooltip": "Aufgaben, deren Fälligkeitsdatum überschritten wurde",
+    "totalLoggedHoursTooltip": "Zeitschätzung und erfasste Zeit für Aufgaben.",
+    "includeArchivedTasks": "Archivierte Aufgaben einbeziehen",
+    "export": "Exportieren",
+    "name": "Name",
+    "status": "Status",
+    "dueDate": "Fälligkeitsdatum",
+    "lastUpdated": "Zuletzt aktualisiert",
+    "na": "n/a"
+  },
+  "justNow": "Gerade eben",
+  "tasksTable": {
+    "daysOverdue": "Tage überfällig",
+    "completedAt": "Abgeschlossen am",
+    "members": "Mitglieder",
+    "overLoggedTime": "Überbuchte Zeit",
+    "completedDate": "Abschlussdatum",
+    "totalAllocation": "Gesamtzuweisung"
+  }
+}

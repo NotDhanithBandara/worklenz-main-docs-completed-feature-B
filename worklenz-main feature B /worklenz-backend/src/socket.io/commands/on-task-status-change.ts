@@ -1,0 +1,217 @@
+import {Server, Socket} from "socket.io";
+
+import db from "../../config/db";
+import {NotificationsService} from "../../services/notifications/notifications.service";
+import {TASK_STATUS_COLOR_ALPHA} from "../../shared/constants";
+import {SocketEvents} from "../events";
+import {getLoggedInUserIdFromSocket, notifyProjectUpdates} from "../util";
+import TasksControllerV2 from "../../controllers/tasks-controller-v2";
+import {getTaskDetails, logProgressChange, logStatusChange} from "../../services/activity-logs/activity-logs.service";
+import { assignMemberIfNot } from "./on-quick-assign-or-remove";
+import { ExternalNotificationsService } from "../../services/external-notifications.service";
+import { log_error } from "../../shared/utils";
+import {verifyNonGuestTaskAccessSocket, logUnauthorizedSocketAccess} from "../authorization";
+import { checkPhaseCompletionGuard } from "../../shared/phase-completion-guard";
+import { autoAdvanceToNextPhase } from "../../shared/phase-auto-advance";
+
+export async function on_task_status_change(_io: Server, socket: Socket, data?: string) {
+  try {
+    const body = JSON.parse(data as string);
+    
+    const hasAccess = await verifyNonGuestTaskAccessSocket(socket, body.task_id);
+    if (!hasAccess) {
+      logUnauthorizedSocketAccess(socket, 'TASK_STATUS_CHANGE', 'task', body.task_id);
+      return;
+    }
+    
+    const userId = getLoggedInUserIdFromSocket(socket);
+    const taskData = await getTaskDetails(body.task_id, "status_id");
+
+    const canContinue = await TasksControllerV2.checkForCompletedDependencies(body.task_id, body.status_id);
+
+    if (!canContinue) {
+      const {color_code, color_code_dark} = await TasksControllerV2.getTaskStatusColor(taskData.status_id);
+
+      return socket.emit(SocketEvents.TASK_STATUS_CHANGE.toString(), {
+        id: body.task_id,
+        parent_task: body.parent_task,
+        status_id: taskData.status_id,
+        color_code: color_code + TASK_STATUS_COLOR_ALPHA,
+        color_code_dark,
+        completed_deps: canContinue
+      });
+    }
+
+    // Phase completion guard: only the phase assignee (or admin) can move to "done"
+    const phaseGuard = await checkPhaseCompletionGuard(userId, body.task_id, body.status_id);
+    if (phaseGuard.blocked) {
+      const {color_code, color_code_dark} = await TasksControllerV2.getTaskStatusColor(taskData.status_id);
+
+      return socket.emit(SocketEvents.TASK_STATUS_CHANGE.toString(), {
+        id: body.task_id,
+        parent_task: body.parent_task,
+        status_id: taskData.status_id,       // revert to previous status
+        color_code: color_code + TASK_STATUS_COLOR_ALPHA,
+        color_code_dark,
+        completed_deps: true,                // not a dependency issue
+        phase_guard_blocked: true,           // signals the phase guard fired
+        phase_assignee_name: phaseGuard.blockerName,
+      });
+    }
+    const q2 = "SELECT handle_on_task_status_change($1, $2, $3) AS res;";
+    const results1 = await db.query(q2, [userId, body.task_id, body.status_id]);
+    const [d] = results1.rows;
+    const changeResponse = d.res;
+
+    changeResponse.color_code = changeResponse.color_code + TASK_STATUS_COLOR_ALPHA;
+
+    // notify to all task members of the change
+    for (const member of changeResponse.members || []) {
+      if (member.user_id === userId) continue;
+      NotificationsService.createNotification({
+        userId: member.user_id,
+        teamId: member.team_id,
+        socketId: member.socket_id,
+        message: changeResponse.message,
+        taskId: body.task_id,
+        projectId: changeResponse.project_id
+      });
+    }
+
+    // Check if the new status is in a "done" category
+    if (changeResponse.status_category?.is_done) {
+      // Get current progress value
+      const progressResult = await db.query(`
+        SELECT progress_value, manual_progress
+        FROM tasks
+        WHERE id = $1
+      `, [body.task_id]);
+
+      const currentProgress = progressResult.rows[0]?.progress_value;
+      const isManualProgress = progressResult.rows[0]?.manual_progress;
+
+      // Only update if not already 100%
+      if (currentProgress !== 100) {
+        // Update progress to 100%
+        await db.query(`
+          UPDATE tasks
+          SET progress_value = 100, manual_progress = TRUE
+          WHERE id = $1
+        `, [body.task_id]);
+
+        // Log the progress change to activity logs
+        await logProgressChange({
+          task_id: body.task_id,
+          old_value: currentProgress !== null ? currentProgress.toString() : "0",
+          new_value: "100",
+          socket
+        });
+
+        // If this is a subtask, update parent task progress
+        if (body.parent_task) {
+          setTimeout(() => {
+            socket.emit(SocketEvents.GET_TASK_PROGRESS.toString(), body.parent_task);
+          }, 100);
+        }
+      }
+
+      // Auto-advance to the next phase (phase_assignees_enabled feature)
+      // NOTE: called AFTER the main TASK_STATUS_CHANGE emit below so the
+      // Done confirmation reaches the client first, then the To Do reset arrives.
+    } else {
+      // Task is moving from "done" to "todo" or "doing" - reset manual_progress to FALSE
+      // and clear progress_value so progress can be recalculated based on subtasks
+      await db.query(`
+        UPDATE tasks
+        SET manual_progress = FALSE, progress_value = NULL
+        WHERE id = $1
+      `, [body.task_id]);
+
+      // If this is a subtask, update parent task progress
+      if (body.parent_task) {
+        setTimeout(() => {
+          socket.emit(SocketEvents.GET_TASK_PROGRESS.toString(), body.parent_task);
+        }, 100);
+      }
+    }
+
+    const info = await TasksControllerV2.getTaskCompleteRatio(body.parent_task || body.task_id);
+
+    socket.emit(SocketEvents.TASK_STATUS_CHANGE.toString(), {
+      id: body.task_id,
+      parent_task: body.parent_task,
+      color_code: changeResponse.color_code,
+      color_code_dark: changeResponse.color_code_dark,
+      complete_ratio: info?.ratio,
+      completed_count: info?.total_completed,
+      total_tasks_count: info?.total_tasks,
+      status_id: body.status_id,
+      completed_at: changeResponse.completed_at,
+      statusCategory: changeResponse.status_category,
+      completed_deps: canContinue
+    });
+
+    // Auto-advance to next phase AFTER Done is confirmed to client
+    // This ensures phase_auto_advanced To Do reset arrives after Done, not before
+    if (changeResponse.status_category?.is_done) {
+      await autoAdvanceToNextPhase(_io, socket, body.task_id);
+    }
+
+    socket.emit(SocketEvents.GET_TASK_PROGRESS.toString(), {
+      id: body.task_id,
+      parent_task: body.parent_task,
+      complete_ratio: info?.ratio,
+      completed_count: info?.total_completed,
+      total_tasks_count: info?.total_tasks
+    });
+
+    const isAlreadyAssigned = await TasksControllerV2.checkUserAssignedToTask(body.task_id, userId as string, body.team_id);
+
+    if (!isAlreadyAssigned) {
+      await assignMemberIfNot(body.task_id, userId as string, body.team_id, _io, socket);
+    }
+
+    logStatusChange({
+      task_id: body.task_id,
+      socket,
+      new_value: body.status_id,
+      old_value: taskData.status_id
+    });
+
+    notifyProjectUpdates(socket, body.task_id);
+
+    // Send external notifications (Slack, Teams)
+    try {
+      const userQuery = `SELECT name FROM users WHERE id = $1`;
+      const userResult = await db.query(userQuery, [userId]);
+      const userName = userResult.rows[0]?.name || "Unknown User";
+
+      const projectQuery = `SELECT project_id FROM tasks WHERE id = $1`;
+      const projectResult = await db.query(projectQuery, [body.task_id]);
+      const projectId = projectResult.rows[0]?.project_id;
+
+      if (projectId) {
+        // Determine notification type based on whether task is completed
+        const notificationType = changeResponse.status_category?.is_done
+          ? "task_completed"
+          : "status_changed";
+
+        await ExternalNotificationsService.sendExternalNotifications(
+          projectId,
+          body.task_id,
+          notificationType,
+          userName,
+          {
+            oldStatusId: taskData.status_id,
+            newStatusId: body.status_id
+          }
+        );
+      }
+    } catch (notifError) {
+      log_error("Error sending external notifications:", notifError);
+      // Don't throw - continue even if notifications fail
+    }
+  } catch (error) {
+    log_error(error);
+  }
+}

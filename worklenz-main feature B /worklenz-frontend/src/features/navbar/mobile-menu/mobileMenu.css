@@ -1,0 +1,49 @@
+.mobile-menu-dropdown .ant-dropdown-menu {
+  padding: 0 !important;
+  margin-top: 2px !important;
+}
+
+.mobile-menu-dropdown .ant-dropdown-menu-item {
+  padding: 0 !important;
+}
+
+.mobile-menu-card .ant-card-head {
+  padding: 0 16px;
+}
+
+.mobile-menu-card .ant-card-body {
+  padding: 4px 0;
+}
+
+.mobile-menu-card .ant-card-body a {
+  display: block;
+  margin: 0;
+  padding: 10px 15px;
+}
+
+/* Setting color on the <a> itself doesn't reach the label: Typography.Text
+   renders its own .ant-typography color rule, which — being an explicit
+   match on the descendant — wins over an inherited value regardless of
+   !important on the ancestor <a>. So the hover color is targeted at
+   .ant-typography directly instead. */
+.mobile-menu-card .ant-card-body a:hover {
+  background-color: #edebf0 !important;
+  box-sizing: border-box;
+}
+
+.mobile-menu-card .ant-card-body a:hover .ant-typography {
+  color: #1890ff !important;
+}
+
+html[data-theme="dark"] .mobile-menu-card .ant-card-body a:hover {
+  background-color: #333 !important;
+}
+
+html[data-theme="dark"] .mobile-menu-card .ant-card-body a:hover .ant-typography {
+  color: #1890ff !important;
+}
+
+.mobile-menu-card {
+  border: none !important;
+  box-shadow: none !important;
+}

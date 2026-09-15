@@ -1,0 +1,145 @@
+import { Card, Flex, Skeleton, Table, Typography } from '@/shared/antd-imports';
+import { useEffect, useState } from 'react';
+import { colors } from '@/styles/colors';
+import { TableProps } from 'antd/lib';
+import { simpleDateFormat } from '@/utils/simpleDateFormat';
+import logger from '@/utils/errorLogger';
+import { projectInsightsApiService } from '@/api/projects/insights/project-insights.api.service';
+import ProjectStatsCard from '@/components/projects/project-stats-card';
+import warningIcon from '@assets/icons/insightsIcons/warning.png';
+import { useAppSelector } from '@/hooks/useAppSelector';
+import { useTranslation } from 'react-i18next';
+import {format} from 'date-fns'
+import { IDeadlineTaskStats } from '@/types/project/project-insights.types';
+import { IInsightTasks } from '@/types/project/projectInsights.types';
+
+const ProjectDeadline = () => {
+  const { includeArchivedTasks, projectId } = useAppSelector(state => state.projectInsightsReducer);
+  const { t } = useTranslation('project-view-insights');
+
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState<IDeadlineTaskStats | null>(null);
+  const { refreshTimestamp } = useAppSelector(state => state.projectReducer);
+
+  const getProjectDeadline = async () => {
+    if (!projectId) return;
+    try {
+      setLoading(true);
+      const res = await projectInsightsApiService.getProjectDeadlineStats(
+        projectId,
+        includeArchivedTasks
+      );
+      if (res.done) {
+        setData(res.body);
+      }
+    } catch {
+      logger.error('Error fetching project deadline stats', { projectId, includeArchivedTasks });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getProjectDeadline();
+  }, [projectId, includeArchivedTasks, refreshTimestamp]);
+
+  // table columns
+  const columns: TableProps['columns'] = [
+    {
+      key: 'name',
+      title: t('common.name', { defaultValue: 'Name' }),
+      // render: (record: IInsightTasks) => <Typography.Text>{record.name}</Typography.Text>,
+      render: (_: any, record: IInsightTasks) => <Typography.Text>{record.name}</Typography.Text>,
+    },
+    {
+      key: 'status',
+      title: t('common.status', { defaultValue: 'Status' }),
+      // render: (record: IInsightTasks) => (
+      render: (_: any, record: IInsightTasks) => (
+        <Flex
+          gap={4}
+          style={{
+            width: 'fit-content',
+            borderRadius: 24,
+            paddingInline: 6,
+            backgroundColor: record.status_color,
+            color: colors.darkGray,
+            cursor: 'pointer',
+          }}
+        >
+          <Typography.Text
+            ellipsis={{ expanded: false }}
+            style={{
+              color: colors.darkGray,
+              fontSize: 13,
+            }}
+          >
+            {record.status_name}
+          </Typography.Text>
+        </Flex>
+      ),
+    },
+    {
+      key: 'dueDate',
+      title: t('common.dueDate', { defaultValue: 'Due Date' }),
+      // render: (record: IInsightTasks) => (
+      render: (_: any, record: IInsightTasks) => (
+        <Typography.Text>
+          {record.end_date ? simpleDateFormat(record.end_date) : t('common.na', { defaultValue: 'N/A' })}
+        </Typography.Text>
+      ),
+    },
+  ];
+
+  return (
+    <Card
+      className="custom-insights-card"
+      title={
+        <Typography.Text style={{ fontSize: 16, fontWeight: 500 }}>
+          {t('projectDeadline.title', { defaultValue: 'Project Deadline' })}{' '}
+          <span style={{ color: colors.lightGray }}>{data?.project_end_date?format(new Date(data.project_end_date),'yyyy-MM-dd'):''}</span>
+        </Typography.Text>
+      }
+      style={{ width: '100%' }}
+    >
+      <Flex vertical gap={24}>
+        <Flex gap={12} style={{ width: '100%' }}>
+          <Skeleton active loading={loading}>
+            <ProjectStatsCard
+              icon={warningIcon}
+              title={t('projectDeadline.overdueTasksHours', { defaultValue: 'Overdue tasks (hours)' })}
+              tooltip={t('projectDeadline.overdueTasksHoursTooltip', { defaultValue: 'Tasks that has time logged past the end date of the project' })}
+              children={data?.deadline_logged_hours_string || t('common.na', { defaultValue: 'N/A' })}
+            />
+            <ProjectStatsCard
+              icon={warningIcon}
+              title={t('projectDeadline.overdueTasks', { defaultValue: 'Overdue tasks' })}
+              tooltip={t('projectDeadline.overdueTasksTooltip', { defaultValue: 'Tasks that are past the end date of the project' })}
+              children={data?.deadline_tasks_count || t('common.na', { defaultValue: 'N/A' })}
+            />
+          </Skeleton>
+        </Flex>
+        <Table
+          className="custom-two-colors-row-table insights-overview-table"
+          dataSource={data?.tasks}
+          columns={columns}
+          // rowKey={record => record.taskId}
+          rowKey={record => record.id}
+          pagination={{
+            showSizeChanger: true,
+            defaultPageSize: 20,
+          }}
+          onRow={record => {
+            return {
+              style: {
+                cursor: 'pointer',
+              },
+            };
+          }}
+        />
+      </Flex>
+    </Card>
+  );
+};
+
+export default ProjectDeadline;

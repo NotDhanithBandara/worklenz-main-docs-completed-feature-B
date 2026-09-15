@@ -1,0 +1,208 @@
+{
+  "chartView": "Vista de gr\u00e1ficos",
+  "calendarView": "Vista de calendario",
+  "tableView": "Vista de tabla",
+  "noWorkloadData": "No hay datos de carga de trabajo disponibles",
+  "noMembersFound": "No se encontraron miembros del equipo",
+  "errorLoadingData": "Error al cargar datos de carga de trabajo",
+  "retry": "Reintentar",
+  "refreshData": "Actualizar datos",
+
+  "overview": {
+    "teamMembers": "Miembros del equipo",
+    "teamMembersTooltip": {
+      "title": "Composici\u00f3n del equipo y estado de asignaci\u00f3n",
+      "memberStatusLabel": "Estado del miembro:",
+      "totalMembersLabel": "Total de miembros:",
+      "overallocatedLabel": "Sobrecargado:",
+      "underutilizedLabel": "Subutilizado:",
+      "optimalLabel": "\u00d3ptimo:"
+    },
+    "totalWorkload": "Carga de trabajo total",
+    "totalWorkloadTooltip": {
+      "title": "Carga de trabajo total estimada de todos los miembros del equipo",
+      "includesLabel": "Incluye:",
+      "estimatedHoursLabel": "Horas estimadas:",
+      "actualHoursLoggedLabel": "Horas registradas:",
+      "progressLabel": "Progreso:"
+    },
+    "hours": "horas",
+    "averageUtilization": "Utilizaci\u00f3n promedio",
+    "averageUtilizationTooltip": {
+      "averageLabel": "Promedio:",
+      "membersLabel": "Miembros:",
+      "totalAssignedLabel": "Total asignado:",
+      "totalCapacityLabel": "Capacidad total:"
+    },
+    "criticalTasks": "Tareas cr\u00edticas",
+    "criticalTasksTooltip": {
+      "criticalTasksLabel": "Tareas cr\u00edticas:",
+      "totalTasksLabel": "Total de tareas:",
+      "criticalPercentageLabel": "Porcentaje cr\u00edtico:"
+    },
+    "totalTasks": "{{count}} tareas totales"
+  },
+
+  "chart": {
+    "capacity": "Capacidad",
+    "allocated": "Asignado",
+    "utilization": "Utilizaci\u00f3n",
+    "barChart": "Gr\u00e1fico de barras",
+    "comparison": "Comparaci\u00f3n",
+    "sortByName": "Ordenar por nombre",
+    "sortByWorkload": "Ordenar por carga de trabajo",
+    "sortByUtilization": "Ordenar por utilizaci\u00f3n",
+    "memberDetails": "Detalles del miembro"
+  },
+
+  "calendar": {
+    "tasks": "tareas",
+    "more": "m\u00e1s",
+    "totalTasks": "{{count}} tareas",
+    "totalHours": "{{hours}} horas",
+    "dayDetails": "Detalles para {{date}}",
+    "utilization": "Utilizaci\u00f3n",
+    "assignedTasks": "Tareas asignadas",
+    "teamAvailability": "Disponibilidad del equipo",
+    "noTasksScheduled": "No hay tareas programadas para este d\u00eda",
+    "taskSummary": "Resumen de tareas",
+    "task": "Tarea",
+    "tasks_plural": "Tareas",
+    "member": "Miembro",
+    "members_plural": "Miembros",
+    "logged": "registrado",
+    "planned": "planificado",
+    "unscheduled": "Sin programar",
+    "hoursAssigned": "{{hours}}h asignadas",
+    "capacityHours": "{{hours}}h capacidad",
+    "unknownMember": "Desconocido",
+    "currentProject": "Proyecto actual",
+    "unknownInitial": "D",
+    "defaultPriority": "Media",
+    "defaultStatus": "En progreso"
+  },
+
+  "table": {
+    "member": "Miembro",
+    "capacity": "Capacidad",
+    "dailyCapacityLabel": "Capacidad diaria (horas)",
+    "allocated": "Asignado",
+    "utilization": "Utilizaci\u00f3n",
+    "status": "Estado",
+    "assignedTasks": "Tareas asignadas",
+    "tasks": "tareas",
+    "actions": "Acciones",
+    "totalMembers": "Total: {{total}} miembros",
+    "taskName": "Nombre de tarea",
+    "project": "Proyecto",
+    "duration": "Duraci\u00f3n",
+    "estimatedHours": "Horas estimadas",
+    "priority": "Prioridad",
+    "progress": "Progreso",
+    "noStart": "Sin inicio",
+    "noEnd": "Sin fin",
+    "currentProject": "Proyecto actual",
+    "unknown": "Desconocido",
+    "defaultPriority": "Media",
+    "defaultStatus": "Por hacer",
+    "hours": "horas",
+    "currentCapacityLabel": "Capacidad actual:",
+    "allocatedLabel": "Asignado:",
+    "utilizationLabel": "Utilizaci\u00f3n:",
+    "statusLabel": "Estado:"
+  },
+
+  "export": {
+    "taskName": "Nombre de tarea",
+    "startDate": "Fecha de inicio",
+    "endDate": "Fecha de fin",
+    "priority": "Prioridad",
+    "status": "Estado",
+    "progress": "Progreso (%)",
+    "memberLabel": "Miembro:",
+    "emailLabel": "Correo:",
+    "capacityLabel": "Capacidad:",
+    "allocatedLabel": "Asignado:",
+    "utilizationLabel": "Utilizaci\u00f3n:",
+    "statusLabel": "Estado:"
+  },
+
+  "status": {
+    "overallocated": "Sobrecargado",
+    "underutilized": "Subutilizado",
+    "optimal": "\u00d3ptimo"
+  },
+
+  "actions": {
+    "viewDetails": "Ver detalles",
+    "adjustCapacity": "Ajustar capacidad",
+    "reassignTasks": "Reasignar tareas",
+    "exportWorkload": "Exportar carga de trabajo",
+    "reassign": "Reasignar"
+  },
+
+  "modal": {
+    "reassignTask": "Reasignar tarea",
+    "task": "Tarea",
+    "currentAssignee": "Asignado actual"
+  },
+
+  "filters": {
+    "title": "Filtros de carga de trabajo",
+    "filters": "Filtros",
+    "timeScale": "Escala de tiempo",
+    "daily": "Diario",
+    "weekly": "Semanal",
+    "monthly": "Mensual",
+    "workingDays": "D\u00edas laborables",
+    "workingHoursPerDay": "Horas de trabajo por d\u00eda",
+    "monday": "Lunes",
+    "tuesday": "Martes",
+    "wednesday": "Mi\u00e9rcoles",
+    "thursday": "Jueves",
+    "friday": "Viernes",
+    "saturday": "S\u00e1bado",
+    "sunday": "Domingo",
+    "showWeekends": "Mostrar fines de semana",
+    "showOverallocated": "Mostrar solo sobrecargados",
+    "showUnderutilized": "Mostrar solo subutilizados",
+    "clearAll": "Limpiar todos los filtros",
+    "dateRanges": "Rangos de fechas",
+    "today": "Hoy",
+    "yesterday": "Ayer",
+    "thisWeek": "Esta semana",
+    "lastWeek": "Semana pasada",
+    "thisMonth": "Este mes",
+    "lastMonth": "Mes pasado",
+    "thisQuarter": "Este trimestre",
+    "last7Days": "\u00daltimos 7 d\u00edas",
+    "last30Days": "\u00daltimos 30 d\u00edas",
+    "last90Days": "\u00daltimos 90 d\u00edas",
+    "custom": "Rango personalizado",
+    "refresh": "Actualizar",
+    "export": "Exportar",
+    "settings": "Configuraci\u00f3n"
+  },
+
+  "common": {
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "close": "Cerrar",
+    "enterCapacityValue": "Por favor ingrese un valor de capacidad",
+    "capacityRangeError": "Debe estar entre 1 y 24 horas"
+  },
+
+  "calculations": {
+    "utilizationFormula": "Utilizaci\u00f3n = (Horas asignadas \u00f7 Capacidad semanal) \u00d7 100",
+    "weeklyCapacityFormula": "Capacidad semanal = Horas diarias \u00d7 D\u00edas laborables por semana",
+    "utilizationTooltip": "{{utilization}}% utilizaci\u00f3n\n\nC\u00e1lculo:\n\u2022 Horas asignadas: {{assignedHours}}h\n\u2022 Capacidad semanal: {{weeklyCapacity}}h ({{dailyHours}}h \u00d7 {{workingDays}} d\u00edas)\n\u2022 F\u00f3rmula: ({{assignedHours}} \u00f7 {{weeklyCapacity}}) \u00d7 100 = {{utilization}}%",
+    "capacityTooltip": "Capacidad semanal: {{weeklyCapacity}} horas\n\nBasado en la configuraci\u00f3n de la organizaci\u00f3n:\n\u2022 Horas diarias: {{dailyHours}}h\n\u2022 D\u00edas laborables: {{workingDays}} por semana\n\u2022 F\u00f3rmula: {{dailyHours}}h \u00d7 {{workingDays}} d\u00edas = {{weeklyCapacity}}h",
+    "statusTooltip": {
+      "overallocated": "Sobrecargado (>100% utilizaci\u00f3n)\n\nEste miembro tiene m\u00e1s trabajo asignado que su capacidad disponible. Considere redistribuir tareas o ajustar la capacidad.",
+      "underutilized": "Subutilizado (<{{threshold}}% utilizaci\u00f3n)\n\nEste miembro tiene capacidad para trabajo adicional. Considere asignar m\u00e1s tareas para optimizar el uso de recursos.",
+      "optimal": "Utilizaci\u00f3n \u00f3ptima ({{threshold}}-100%)\n\nEste miembro tiene un equilibrio saludable entre tareas asignadas y capacidad disponible."
+    },
+    "workingDaysInfo": "D\u00edas laborables basados en el horario de la organizaci\u00f3n:\n{{workingDaysList}}",
+    "averageUtilizationTooltip": "Promedio del equipo: {{average}}%\n\nCalculado a partir de {{memberCount}} miembros del equipo:\n\u2022 Total de horas asignadas: {{totalAssigned}}h\n\u2022 Capacidad total del equipo: {{totalCapacity}}h\n\u2022 F\u00f3rmula: ({{totalAssigned}} \u00f7 {{totalCapacity}}) \u00d7 100 = {{average}}%"
+  }
+}

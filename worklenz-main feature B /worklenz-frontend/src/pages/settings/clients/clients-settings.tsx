@@ -1,0 +1,218 @@
+import {
+  DeleteOutlined,
+  EditOutlined,
+  ExclamationCircleFilled,
+  SearchOutlined,
+} from '@/shared/antd-imports';
+import {
+  Button,
+  Card,
+  Flex,
+  Input,
+  Popconfirm,
+  Table,
+  TableProps,
+  Tooltip,
+  Typography,
+} from '@/shared/antd-imports';
+import { useEffect, useCallback, useMemo, useState } from 'react';
+import { colors } from '@/styles/colors';
+import { useAppDispatch } from '@/hooks/useAppDispatch';
+import {
+  deleteClient,
+  fetchClients,
+  toggleClientDrawer,
+} from '@features/settings/client/clientSlice';
+import { useAppSelector } from '@/hooks/useAppSelector';
+import { IClientViewModel } from '@/types/client.types';
+import PinRouteToNavbarButton from '@components/PinRouteToNavbarButton';
+import { useTranslation } from 'react-i18next';
+import { DEFAULT_PAGE_SIZE } from '@/shared/constants';
+import ClientDrawer from './client-drawer';
+import { useDocumentTitle } from '@/hooks/useDoumentTItle';
+import logger from '@/utils/errorLogger';
+import { useMixpanelTracking } from '@/hooks/useMixpanelTracking';
+import { evt_settings_clients_visit } from '@/shared/worklenz-analytics-events';
+
+const ClientsSettings: React.FC = () => {
+  const { t } = useTranslation('settings/clients');
+  const { clients } = useAppSelector(state => state.clientReducer);
+  const dispatch = useAppDispatch();
+  const { trackMixpanelEvent } = useMixpanelTracking();
+
+  useDocumentTitle(t('pageTitle', { defaultValue: 'Clients' }));
+
+  const [hoverRow, setHoverRow] = useState<string | null>(null);
+  const [selectedClient, setSelectedClient] = useState<IClientViewModel | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: DEFAULT_PAGE_SIZE,
+    field: 'name',
+    order: 'desc',
+  });
+
+  const getClients = useCallback(() => {
+    const params = {
+      index: pagination.current,
+      size: pagination.pageSize,
+      field: pagination.field,
+      order: pagination.order,
+      search: searchQuery,
+    };
+    dispatch(fetchClients(params));
+  }, [pagination, searchQuery, dispatch]);
+
+  useEffect(() => {
+    trackMixpanelEvent(evt_settings_clients_visit);
+  }, [trackMixpanelEvent]);
+
+  useEffect(() => {
+    getClients();
+  }, [searchQuery, pagination]);
+
+  const handleClientSelect = (record: IClientViewModel) => {
+    setSelectedClient(record);
+    dispatch(toggleClientDrawer());
+  };
+
+  const deleteClientHandler = async (id: string | undefined) => {
+    if (!id) return;
+    try {
+      await dispatch(deleteClient(id)).unwrap();
+      getClients();
+    } catch (error) {
+      logger.error('Failed to delete client:', error);
+    }
+  };
+
+  const columns: TableProps['columns'] = useMemo(
+    () => [
+      {
+        key: 'name',
+        sorter: true,
+        title: t('nameColumn', { defaultValue: 'Name' }),
+        onCell: record => ({
+          onClick: () => handleClientSelect(record),
+        }),
+        render: (record: IClientViewModel) => <Typography.Text>{record.name}</Typography.Text>,
+      },
+      {
+        key: 'project',
+        title: t('projectColumn', { defaultValue: 'Projects' }),
+        onCell: record => ({
+          onClick: () => handleClientSelect(record),
+        }),
+        render: (record: IClientViewModel) =>
+          record.projects_count ? (
+            <Typography.Text>{record.projects_count}</Typography.Text>
+          ) : (
+            <Typography.Text type="secondary">{t('noProjectsAvailable', { defaultValue: 'No projects' })}</Typography.Text>
+          ),
+      },
+      {
+        key: 'actionBtns',
+        width: 80,
+        render: (record: IClientViewModel) =>
+          hoverRow === record.id && (
+            <Flex gap={8} style={{ padding: 0 }}>
+              <Tooltip title={t('editTooltip', { defaultValue: 'Edit' })}>
+                <Button
+                  size="small"
+                  icon={<EditOutlined />}
+                  onClick={() => handleClientSelect(record)}
+                />
+              </Tooltip>
+              <Popconfirm
+                title={t('deleteConfirmationTitle', { defaultValue: 'Are you sure?' })}
+                icon={<ExclamationCircleFilled style={{ color: colors.vibrantOrange }} />}
+                okText={t('deleteConfirmationOk', { defaultValue: 'Yes' })}
+                cancelText={t('deleteConfirmationCancel', { defaultValue: 'Cancel' })}
+                onConfirm={() => deleteClientHandler(record.id)}
+              >
+                <Tooltip title={t('deleteTooltip', { defaultValue: 'Delete' })}>
+                  <Button
+                    shape="default"
+                    icon={<DeleteOutlined />}
+                    size="small"
+                  // ✅ REMOVED onClick handler - Popconfirm will handle the confirmation
+                  />
+                </Tooltip>
+              </Popconfirm>
+            </Flex>
+          ),
+      },
+    ],
+    [hoverRow, t, dispatch]
+  );
+
+  return (
+    <Card
+      style={{ width: '100%' }}
+      title={
+        <Flex justify="flex-end">
+          <Flex gap={8} align="center" justify="flex-end" style={{ width: '100%', maxWidth: 400 }}>
+            <Input
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.currentTarget.value)}
+              placeholder={t('searchPlaceholder', { defaultValue: 'Search by name' })}
+              style={{ maxWidth: 232 }}
+              suffix={<SearchOutlined />}
+            />
+            <Button
+              type="primary"
+              onClick={() => {
+                dispatch(toggleClientDrawer());
+                setSelectedClient(null);
+              }}
+            >
+              {t('createClient', { defaultValue: 'Create Client' })}
+            </Button>
+            <Tooltip title={t('pinTooltip', { defaultValue: 'Pin to navbar' })} trigger={'hover'}>
+              <PinRouteToNavbarButton
+                name="clients"
+                path="/worklenz/settings/clients"
+                adminOnly={true}
+              />
+            </Tooltip>
+          </Flex>
+        </Flex>
+      }
+    >
+      <Table
+        className="custom-two-colors-row-table"
+        dataSource={clients.data}
+        columns={columns}
+        rowKey={record => record.id}
+        onRow={record => ({
+          onMouseEnter: () => setHoverRow(record.id),
+        })}
+        pagination={{
+          showSizeChanger: true,
+          defaultPageSize: DEFAULT_PAGE_SIZE,
+          current: pagination.current,
+          pageSize: pagination.pageSize,
+          total: clients.total,
+        }}
+        onChange={(paginationInfo, _filters, sorter) => {
+          const sort = Array.isArray(sorter) ? sorter[0] : sorter;
+          setPagination(prev => ({
+            current: paginationInfo.current ?? prev.current,
+            pageSize: paginationInfo.pageSize ?? prev.pageSize,
+            field: (sort?.field as string) ?? prev.field,
+            order: sort?.order === 'ascend' ? 'asc' : sort?.order === 'descend' ? 'desc' : prev.order,
+          }));
+        }}
+      />
+      <ClientDrawer
+        client={selectedClient}
+        drawerClosed={() => {
+          setSelectedClient(null);
+          getClients();
+        }}
+      />
+    </Card>
+  );
+};
+
+export default ClientsSettings;

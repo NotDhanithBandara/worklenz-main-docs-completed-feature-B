@@ -1,0 +1,23 @@
+{
+  "uploadError": "Mund të ngarkoni vetëm skedarë JPG/PNG!",
+  "uploadSizeError": "Imazhi duhet të jetë më i vogël se 2MB!",
+  "upload": "Ngarko",
+  "nameLabel": "Emri",
+  "nameRequiredError": "Emri është i detyrueshëm",
+  "emailLabel": "Email",
+  "emailRequiredError": "Email-i është i detyrueshëm",
+  "saveChanges": "Ruaj Ndryshimet",
+  "save": "Ruaj",
+  "profileJoinedText": "U bashkua më {{date}}",
+  "profileLastUpdatedText": "Përditësuar më {{date}}",
+  "avatarTooltip": "Klikoni për të ngarkuar një avatar",
+  "removeAvatar": "Hiq foton",
+  "removeAvatarConfirmTitle": "Të hiqet fotografia e profilit?",
+  "removeAvatarConfirmDescription": "Avatari juaj do të hiqet dhe në vend të tij do të shfaqen inicialet tuaja.",
+  "cancel": "Anulo",
+  "justNow": "Sapo",
+  "cropProfilePicture": "Prisni Foton e Profilit",
+  "title": "Cilësimet e Profilit",
+  "nameMinLengthError": "Emri duhet të ketë të paktën 2 karaktere",
+  "nameMaxLengthError": "Emri nuk mund të tejkalojë 50 karaktere"
+}

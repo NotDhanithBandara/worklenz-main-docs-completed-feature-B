@@ -1,0 +1,23 @@
+{
+  "uploadError": "You can only upload JPG/PNG file!",
+  "uploadSizeError": "Image must be smaller than 2MB!",
+  "upload": "Upload",
+  "nameLabel": "Name",
+  "nameRequiredError": "Name is required",
+  "emailLabel": "Email",
+  "emailRequiredError": "Email is required",
+  "saveChanges": "Save Changes",
+  "save": "Save",
+  "profileJoinedText": "Joined {{date}}",
+  "profileLastUpdatedText": "Last updated {{date}}",
+  "avatarTooltip": "Click to upload an avatar",
+  "removeAvatar": "Remove photo",
+  "removeAvatarConfirmTitle": "Remove profile picture?",
+  "removeAvatarConfirmDescription": "Your avatar will be removed and your initials will be shown instead.",
+  "cancel": "Cancel",
+  "justNow": "Just now",
+  "cropProfilePicture": "Crop Profile Picture",
+  "title": "Profile Settings",
+  "nameMinLengthError": "Name must be at least 2 characters",
+  "nameMaxLengthError": "Name cannot exceed 50 characters"
+}

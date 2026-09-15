@@ -1,0 +1,59 @@
+/* Table wrapper */
+.task-list-table-sticky,
+.ant-table-wrapper {
+  position: relative;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: visible; /* important for sticky to work */
+}
+
+/* First column */
+.sticky-selector-column {
+  left: 0;
+  z-index: 20;
+  position: sticky;
+  background: var(--base-bg);
+}
+
+/* Second column */
+.sticky-key-column {
+  left: 56px; /* adjust width of first column */
+  z-index: 20;
+  position: sticky;
+  background: var(--base-bg);
+  min-width: 100px;
+  max-width: 100px;
+  width: 100px;
+}
+
+/* Header cells above all */
+.task-list-table-sticky thead .sticky-selector-column,
+.task-list-table-sticky thead .sticky-key-column,
+.ant-table-thead > tr > th.ant-table-cell-fix-left {
+  z-index: 40 !important;
+}
+
+/* Even row background */
+.task-list-table-sticky tr:nth-child(even) .sticky-selector-column,
+.task-list-table-sticky tr:nth-child(even) .sticky-key-column {
+  background: var(--table-cell-bg);
+}
+
+/* Hover */
+.task-list-table-sticky tr:hover .sticky-selector-column,
+.task-list-table-sticky tr:hover .sticky-key-column {
+  background: var(--hover-bg);
+}
+
+/* Shadow for separation */
+.sticky-selector-column::after,
+.sticky-key-column::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 1px;
+  box-shadow: 2px 0 4px rgba(0,0,0,0.1);
+  pointer-events: none;
+}

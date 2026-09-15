@@ -1,0 +1,483 @@
+import React, { useState, useRef, useEffect, useMemo, useCallback, useLayoutEffect } from 'react';
+import { createPortal } from 'react-dom';
+import { useAppSelector } from '@/hooks/useAppSelector';
+import { useSocket } from '@/socket/socketContext';
+import { SocketEvents } from '@/shared/socket-events';
+import { Task } from '@/types/task-management.types';
+import { ClearOutlined, CheckOutlined, Tooltip } from '@/shared/antd-imports';
+import { Avatar, Checkbox } from '@/components';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/app/store';
+import { ITeamMembersViewModel } from '@/types/teamMembers/teamMembersViewModel.types';
+import { sortTeamMembers } from '@/utils/sort-team-members';
+
+interface TaskPhaseDropdownProps {
+  task: Task;
+  projectId: string;
+  isDarkMode?: boolean;
+  disabled?: boolean;
+}
+
+interface PhaseTab {
+  type: 'phases' | 'assignee';
+}
+
+// Fallback constants - should match CSS max-height/max-width
+const DROPDOWN_HEIGHT = 280; // Estimated max height including padding
+const DROPDOWN_WIDTH = 220; // Max width from CSS: max-w-[220px]
+const VIEWPORT_PADDING = 8; // Minimal space from viewport edges
+
+const TaskPhaseDropdown: React.FC<TaskPhaseDropdownProps> = ({
+  task,
+  projectId,
+  isDarkMode = false,
+  disabled = false,
+}) => {
+  const { socket, connected } = useSocket();
+  const [isOpen, setIsOpen] = useState(false);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
+  const [placement, setPlacement] = useState<'bottom' | 'top'>('bottom');
+  const [dropdownDimensions, setDropdownDimensions] = useState({
+    width: DROPDOWN_WIDTH,
+    height: DROPDOWN_HEIGHT,
+  });
+  const [activeTab, setActiveTab] = useState<'phases' | 'assignee'>('phases');
+  const [teamMembers, setTeamMembers] = useState<ITeamMembersViewModel>({ data: [], total: 0 });
+  const [searchQuery, setSearchQuery] = useState('');
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const rafIdRef = useRef<number | null>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const { phaseList } = useAppSelector(state => state.phaseReducer);
+  const members = useSelector((state: RootState) => state.teamMembersReducer.teamMembers);
+
+  // Find current phase details - task.phase can be phase ID or phase name
+  const currentPhase = useMemo(() => {
+    if (!task.phase) return null;
+
+    // First try to find by ID (most common case)
+    let found = phaseList.find(phase => phase.id === task.phase);
+
+    // If not found and looks like a name (not UUID), try by name
+    if (!found && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(task.phase)) {
+      found = phaseList.find(phase => phase.name === task.phase);
+    }
+
+    return found || null;
+  }, [phaseList, task.phase]);
+
+  const filteredMembers = useMemo(() => {
+    return teamMembers?.data?.filter(member =>
+      member.name?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [teamMembers, searchQuery]);
+
+  // Measure actual dropdown dimensions when it opens
+  useLayoutEffect(() => {
+    if (isOpen && dropdownRef.current) {
+      const rect = dropdownRef.current.getBoundingClientRect();
+      setDropdownDimensions({
+        width: rect.width,
+        height: rect.height,
+      });
+    }
+  }, [isOpen]);
+
+  // Handle phase change
+  const handlePhaseChange = useCallback(
+    (phaseId: string, phaseName: string) => {
+      if (!task.id || !phaseId || !connected) return;
+
+      socket?.emit(SocketEvents.TASK_PHASE_CHANGE.toString(), {
+        task_id: task.id,
+        phase_id: phaseId,
+        parent_task: null,
+      });
+      setIsOpen(false);
+    },
+    [task.id, connected, socket]
+  );
+
+  // Handle phase clear
+  const handlePhaseClear = useCallback(() => {
+    if (!task.id || !connected) return;
+
+    socket?.emit(SocketEvents.TASK_PHASE_CHANGE.toString(), {
+      task_id: task.id,
+      phase_id: null,
+      parent_task: null,
+    });
+    setIsOpen(false);
+  }, [task.id, connected, socket]);
+
+  // Calculate dropdown position with viewport boundary detection
+  const calculateDropdownPosition = useCallback(() => {
+    if (!buttonRef.current) return;
+
+    const rect = buttonRef.current.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+    const viewportWidth = window.innerWidth;
+
+    // Use measured dimensions when available, fallback to constants
+    const { width: dropdownWidth, height: dropdownHeight } = dropdownDimensions;
+
+    // Calculate available space
+    const spaceBelow = viewportHeight - rect.bottom;
+    const spaceAbove = rect.top;
+
+    // Check if dropdown can fit in each direction
+    const canShowBelow = spaceBelow >= dropdownHeight;
+    const canShowAbove = spaceAbove >= dropdownHeight;
+
+    let top = 0;
+    let left = rect.left + window.scrollX;
+    let newPlacement: 'top' | 'bottom' = 'bottom';
+
+    // Determine optimal placement
+    if (canShowBelow) {
+      // Prefer below if there's enough space
+      top = rect.bottom + window.scrollY + 4;
+      newPlacement = 'bottom';
+    } else if (canShowAbove) {
+      // Use above if there's enough space
+      top = rect.top + window.scrollY - dropdownHeight - 4;
+      newPlacement = 'top';
+    } else {
+      // Not enough space in either direction, pick the side with more space
+      if (spaceBelow >= spaceAbove) {
+        // More space below, but need to clamp
+        top = rect.bottom + window.scrollY + 4;
+        newPlacement = 'bottom';
+      } else {
+        // More space above, but need to clamp
+        top = rect.top + window.scrollY - dropdownHeight - 4;
+        newPlacement = 'top';
+      }
+    }
+
+    // Adjust horizontal position to stay within viewport
+    if (left + dropdownWidth > viewportWidth + window.scrollX) {
+      left = Math.max(
+        VIEWPORT_PADDING + window.scrollX,
+        viewportWidth + window.scrollX - dropdownWidth - VIEWPORT_PADDING
+      );
+    } else if (left < window.scrollX + VIEWPORT_PADDING) {
+      left = window.scrollX + VIEWPORT_PADDING;
+    }
+
+    // Clamp vertical position to ensure dropdown stays within viewport
+    const maxTop = window.scrollY + viewportHeight - dropdownHeight - VIEWPORT_PADDING;
+    const minTop = window.scrollY + VIEWPORT_PADDING;
+
+    if (newPlacement === 'bottom') {
+      // Clamp when positioned below
+      top = Math.min(top, maxTop);
+    } else {
+      // Clamp when positioned above
+      top = Math.max(top, minTop);
+    }
+
+    // Final check - if dropdown would still go out of bounds, force to opposite side
+    if (newPlacement === 'bottom' && top > maxTop) {
+      // Can't fit below, try above
+      top = Math.max(rect.top + window.scrollY - dropdownHeight - 4, minTop);
+      newPlacement = 'top';
+    } else if (newPlacement === 'top' && top < minTop) {
+      // Can't fit above, try below
+      top = Math.min(rect.bottom + window.scrollY + 4, maxTop);
+      newPlacement = 'bottom';
+    }
+
+    setPlacement(newPlacement);
+    setDropdownPosition({ top, left });
+  }, [dropdownDimensions]);
+
+  // Create a throttled version of calculateDropdownPosition using requestAnimationFrame
+  const throttledCalculatePosition = useCallback(() => {
+    if (rafIdRef.current !== null) {
+      cancelAnimationFrame(rafIdRef.current);
+    }
+
+    rafIdRef.current = requestAnimationFrame(() => {
+      calculateDropdownPosition();
+      rafIdRef.current = null;
+    });
+  }, [calculateDropdownPosition]);
+
+  // Handle outside clicks and calculate position
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (buttonRef.current && buttonRef.current.contains(event.target as Node)) {
+        return;
+      }
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen && buttonRef.current) {
+      // Use requestAnimationFrame to ensure DOM is ready
+      requestAnimationFrame(() => {
+        calculateDropdownPosition();
+      });
+
+      document.addEventListener('mousedown', handleClickOutside);
+
+      // Recalculate on window resize or scroll using throttled version
+      window.addEventListener('resize', throttledCalculatePosition);
+      window.addEventListener('scroll', throttledCalculatePosition, true);
+
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+        window.removeEventListener('resize', throttledCalculatePosition);
+        window.removeEventListener('scroll', throttledCalculatePosition, true);
+
+        // Cancel any pending animation frame
+        if (rafIdRef.current !== null) {
+          cancelAnimationFrame(rafIdRef.current);
+          rafIdRef.current = null;
+        }
+      };
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen, calculateDropdownPosition, throttledCalculatePosition]);
+
+  // Get phase color
+  const getPhaseColor = useCallback((phase: any) => {
+    return phase?.color_code || '#722ed1';
+  }, []);
+
+  // Format phase name for display
+  const formatPhaseName = useCallback((name: string) => {
+    if (!name) return 'Select';
+    return name;
+  }, []);
+
+  // Determine if no phase is selected
+  const hasPhase = task.phase && task.phase.trim() !== '';
+
+  return (
+    <>
+      {/* Phase Container */}
+      <div className="inline-flex items-center gap-1 w-full justify-center">
+        {/* Phase Button */}
+        <Tooltip title={hasPhase && currentPhase ? currentPhase.name : ''} placement="top">
+          <button
+            ref={buttonRef}
+            onClick={e => {
+              if (disabled) return;
+              e.preventDefault();
+              e.stopPropagation();
+              setIsOpen(!isOpen);
+            }}
+            disabled={disabled}
+            className={`
+              inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium
+              transition-all duration-200 hover:opacity-80 border-0 min-w-[70px] justify-center
+              ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}
+            `}
+            style={{
+              backgroundColor:
+                hasPhase && currentPhase
+                  ? getPhaseColor(currentPhase)
+                  : isDarkMode
+                    ? '#4b5563'
+                    : '#9ca3af',
+              color: 'white',
+              maxWidth: '100%',
+            }}
+          >
+            <span 
+              style={{ 
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                maxWidth: '100%',
+              }}
+            >
+              {hasPhase && currentPhase ? formatPhaseName(currentPhase.name || '') : 'Select'}
+            </span>
+            <svg
+              className={`w-3 h-3 transition-transform duration-200 flex-shrink-0 ${isOpen ? 'rotate-180' : ''}`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+        </Tooltip>
+
+      </div>
+
+      {/* Dropdown Menu */}
+      {isOpen && !disabled &&
+        createPortal(
+          <div
+            ref={dropdownRef}
+            className={`
+            fixed min-w-[160px] max-w-[280px] 
+            rounded border backdrop-blur-xs z-9999
+            ${
+              isDarkMode
+                ? 'bg-gray-900/95 border-gray-600 shadow-2xl shadow-black/50'
+                : 'bg-white/95 border-gray-200 shadow-2xl shadow-gray-500/20'
+            }
+          `}
+            style={{
+              top: dropdownPosition.top,
+              left: dropdownPosition.left,
+              zIndex: 9999,
+              transformOrigin: placement === 'top' ? 'center bottom' : 'center top',
+              animation: 'fadeInScale 0.15s ease-out',
+            }}
+          >
+            {/* Phase Options */}
+            <div className="py-1 max-h-64 overflow-y-auto">
+              {/* No Phase Option */}
+              <button
+                onClick={handlePhaseClear}
+                className={`
+                w-full px-3 py-2.5 text-left text-xs font-medium flex items-center gap-3
+                transition-all duration-150 hover:scale-[1.02] active:scale-[0.98]
+                ${
+                  isDarkMode
+                    ? 'hover:bg-gray-700/80 text-gray-100'
+                    : 'hover:bg-gray-50/70 text-gray-900'
+                }
+                ${
+                  !hasPhase
+                    ? isDarkMode
+                      ? 'bg-gray-700/60 ring-1 ring-blue-400/40'
+                      : 'bg-blue-50/50 ring-1 ring-blue-200'
+                    : ''
+                }
+              `}
+                style={{
+                  animation: 'slideInFromLeft 0.2s ease-out forwards',
+                }}
+              >
+                <div className="flex items-center justify-center w-4 h-4">
+                  <ClearOutlined className="w-3 h-3" />
+                </div>
+
+                <div
+                  className={`w-3 h-3 rounded-full shadow-sm border-2 ${
+                    isDarkMode ? 'border-gray-800/30' : 'border-white/20'
+                  }`}
+                  style={{ backgroundColor: isDarkMode ? '#4b5563' : '#9ca3af' }}
+                />
+
+                <span className="flex-1 truncate">No Phase</span>
+
+                {!hasPhase && (
+                  <div className="flex items-center gap-1">
+                    <div
+                      className={`w-1.5 h-1.5 rounded-full ${isDarkMode ? 'bg-blue-400' : 'bg-blue-500'}`}
+                    />
+                    <span
+                      className={`text-xs font-medium ${isDarkMode ? 'text-blue-300' : 'text-blue-600'}`}
+                    >
+                      Current
+                    </span>
+                  </div>
+                )}
+              </button>
+
+              {/* Phase Options */}
+              {phaseList.map((phase, index) => {
+                const isSelected = phase.name === task.phase;
+
+                return (
+                  <button
+                    key={phase.id}
+                    onClick={() => handlePhaseChange(phase.id!, phase.name!)}
+                    className={`
+                    w-full px-3 py-2.5 text-left text-xs font-medium flex items-center gap-3
+                    transition-all duration-150 hover:scale-[1.02] active:scale-[0.98]
+                    ${
+                      isDarkMode
+                        ? 'hover:bg-gray-700/80 text-gray-100'
+                        : 'hover:bg-gray-50/70 text-gray-900'
+                    }
+                    ${
+                      isSelected
+                        ? isDarkMode
+                          ? 'bg-gray-700/60 ring-1 ring-blue-400/40'
+                          : 'bg-blue-50/50 ring-1 ring-blue-200'
+                        : ''
+                    }
+                  `}
+                    style={{
+                      animationDelay: `${(index + 1) * 30}ms`,
+                      animation: 'slideInFromLeft 0.2s ease-out forwards',
+                    }}
+                  >
+                    <div
+                      className={`w-3 h-3 rounded-full shadow-sm border-2 ${
+                        isDarkMode ? 'border-gray-800/30' : 'border-white/20'
+                      }`}
+                      style={{ backgroundColor: getPhaseColor(phase) }}
+                    />
+
+                    <span className="flex-1 truncate">{formatPhaseName(phase.name || '')}</span>
+
+                    {isSelected && (
+                      <div className="flex items-center gap-1">
+                        <div
+                          className={`w-1.5 h-1.5 rounded-full ${isDarkMode ? 'bg-blue-400' : 'bg-blue-500'}`}
+                        />
+                        <span
+                          className={`text-xs font-medium ${isDarkMode ? 'text-blue-300' : 'text-blue-600'}`}
+                        >
+                          Current
+                        </span>
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>,
+          document.body
+        )}
+
+      {/* CSS Animations */}
+      {isOpen &&
+        createPortal(
+          <style>
+            {`
+            @keyframes fadeInScale {
+              from {
+                opacity: 0;
+                transform: scale(0.95) translateY(-5px);
+              }
+              to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+              }
+            }
+            
+            @keyframes slideInFromLeft {
+              from {
+                opacity: 0;
+                transform: translateX(-10px);
+              }
+              to {
+                opacity: 1;
+                transform: translateX(0);
+              }
+            }
+          `}
+          </style>,
+          document.head
+        )}
+    </>
+  );
+};
+
+export default TaskPhaseDropdown;

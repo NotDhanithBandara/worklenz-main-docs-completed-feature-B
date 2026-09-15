@@ -1,0 +1,747 @@
+/* Hide scrollbar for Chrome, Safari and Opera */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* Gantt task list specific styles */
+.gantt-task-list-container {
+  /* Ensure the task list stays fixed and doesn't interfere with timeline scrolling */
+  position: relative;
+  box-sizing: border-box;
+}
+
+.gantt-timeline-container {
+  /* Ensure timeline scrolling doesn't affect task list positioning */
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* Custom scrollbar for task list - hide scrollbar */
+.gantt-task-list-scroll {
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none; /* Firefox - hide scrollbar */
+  -ms-overflow-style: none; /* IE and Edge - hide scrollbar */
+}
+
+/* Webkit scrollbar styling - hide scrollbar */
+.gantt-task-list-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Gantt chart scrollbar - show both vertical and horizontal */
+.gantt-chart-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.gantt-chart-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.gantt-chart-scroll::-webkit-scrollbar-thumb {
+  background-color: #cbd5e0;
+  border-radius: 4px;
+}
+
+.gantt-chart-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: #a0aec0;
+}
+
+/* Firefox - hide horizontal scrollbar */
+.gantt-chart-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e0 transparent;
+}
+
+/* Dark mode chart scrollbar */
+.dark .gantt-chart-scroll::-webkit-scrollbar-thumb {
+  background-color: #4a5568;
+}
+
+.dark .gantt-chart-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: #718096;
+}
+
+.dark .gantt-chart-scroll {
+  scrollbar-color: #4a5568 transparent;
+}
+
+/* Ensure consistent row heights and alignment */
+.gantt-task-list-scroll,
+.gantt-chart-scroll {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  /* Ensure same scrolling behavior */
+  scroll-behavior: auto;
+  /* Prevent sub-pixel rendering issues */
+  transform: translateZ(0);
+  will-change: scroll-position;
+}
+
+/* Force consistent border rendering */
+.gantt-task-list-scroll .border-b,
+.gantt-chart-scroll .border-b {
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+}
+
+/* Improve visual hierarchy for phase rows */
+.gantt-phase-row {
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.gantt-phase-row:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.gantt-phase-row::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background-color: currentColor;
+  opacity: 0.6;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.gantt-phase-row:hover::before {
+  opacity: 0.8;
+}
+
+/* Task row hover states removed to prevent full-row shading */
+
+/* Improved button styles */
+.gantt-add-task-btn {
+  transition: all 0.2s ease;
+  border-radius: 6px;
+}
+
+.gantt-add-task-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Phase expansion transitions */
+.gantt-phase-children {
+  overflow: hidden;
+  transition:
+    max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.3s ease-in-out;
+}
+
+.gantt-phase-children.collapsed {
+  max-height: 0;
+  opacity: 0;
+}
+
+.gantt-phase-children.expanded {
+  max-height: 2000px; /* Adjust based on expected max children */
+  opacity: 1;
+}
+
+/* Individual task transitions */
+.gantt-task-row,
+.gantt-add-task-inline {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Staggered animation for multiple tasks */
+.gantt-task-stagger-1 {
+  animation-delay: 0.05s;
+}
+.gantt-task-stagger-2 {
+  animation-delay: 0.1s;
+}
+.gantt-task-stagger-3 {
+  animation-delay: 0.15s;
+}
+.gantt-task-stagger-4 {
+  animation-delay: 0.2s;
+}
+.gantt-task-stagger-5 {
+  animation-delay: 0.25s;
+}
+
+/* Expand/collapse icon transitions */
+.gantt-expand-icon {
+  transition: transform 0.2s ease-in-out;
+}
+
+.gantt-expand-icon.expanded {
+  transform: rotate(90deg);
+}
+
+/* Task row slide-in animation */
+.gantt-task-slide-in {
+  animation: slideIn 0.3s ease-out forwards;
+}
+
+.gantt-task-slide-out {
+  animation: slideOut 0.2s ease-in forwards;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 48px; /* Height of a task row (unified with h-12 / height: 3rem) */
+  }
+}
+
+@keyframes slideOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 48px;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+    max-height: 0;
+  }
+}
+
+/* Add task button specific styles */
+.gantt-add-task-inline {
+  transition: all 0.2s ease-in-out;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Timeline task bar transitions */
+.gantt-chart-scroll .gantt-task-slide-in {
+  animation: slideInTimeline 0.3s ease-out forwards;
+}
+
+@keyframes slideInTimeline {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    max-height: 48px; /* Height of a task row (unified with h-12 / height: 3rem) */
+  }
+}
+
+/* Enhanced timeline task bar styling. Deliberately excludes width/left/height/top (and
+   "all") — this selector also matches the chart's own totalWidth-driven content wrapper
+   (GanttChart.tsx's outer "relative" div), and animating that div's width made it
+   momentarily report a stale, mid-transition scrollWidth right after a zoom level change,
+   which is what threw off the Gantt "Today" centering (and any scrollTo clamping against
+   it) specifically when zooming out to Week/Month. */
+.gantt-chart-scroll .relative {
+  transition:
+    background-color 0.2s ease-in-out,
+    box-shadow 0.2s ease-in-out,
+    opacity 0.2s ease-in-out,
+    transform 0.2s ease-in-out;
+}
+
+/* Ensure timeline task bars have smooth hover transitions */
+.gantt-chart-scroll .hover\\:bg-gray-50:hover {
+  transition: background-color 0.15s ease-in-out;
+}
+
+/* Task bar resize and drag styles */
+.gantt-task-bar {
+  user-select: none;
+  transition:
+    opacity 0.2s ease,
+    transform 0.1s ease;
+}
+
+.gantt-task-bar:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.gantt-task-bar.dragging {
+  opacity: 0.8;
+  cursor: move !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 50;
+}
+
+.gantt-task-bar.resizing {
+  opacity: 0.8;
+  cursor: ew-resize !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Dependency handle - a small circular anchor sitting right on the bar's
+   top-left / bottom-right corner, used to drag out a new dependency link.
+   Visibility (opacity/scale) is set inline from React state (isBarHovered) in
+   GanttChart.tsx, NOT from a CSS :hover selector - a bar-scoped `.group:hover`
+   rule previously drove this and was unreliable (handles could read as "stuck
+   visible" depending on where the pointer actually sat), so only static/
+   shared appearance lives here. */
+.gantt-dependency-handle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1.5px solid rgba(59, 130, 246, 0.9);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  transform-origin: center;
+  transition:
+    opacity 0.15s ease,
+    transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: auto;
+  z-index: 25;
+}
+
+/* Anchored 6px up/left of the top-left corner (then centered on that point via
+   the translate in GanttChart.tsx), so there's a visible diagonal gap instead
+   of the dot straddling the bar's edge. */
+.gantt-dependency-handle.left {
+  top: -6px;
+  left: -6px;
+}
+
+/* Anchored 6px down/right of the bottom-right corner, same reasoning. */
+.gantt-dependency-handle.right {
+  bottom: -6px;
+  right: -6px;
+}
+
+.gantt-dependency-handle.left:hover {
+  transform: translate(-50%, -50%) scale(1.2) !important;
+  background: rgba(59, 130, 246, 0.15);
+}
+
+.gantt-dependency-handle.right:hover {
+  transform: translate(50%, 50%) scale(1.2) !important;
+  background: rgba(59, 130, 246, 0.15);
+}
+
+.gantt-dependency-target {
+  background: rgba(59, 130, 246, 0.12);
+  border-color: rgba(59, 130, 246, 0.35);
+  box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.2);
+}
+
+.gantt-task-bar.dependency-creating {
+  cursor: crosshair !important;
+}
+
+/* Resize handles - renamed to gantt-bar-resize-handle (was gantt-resize-handle)
+   because that name collides with an unrelated class of the same name in
+   gantt-task-list-resize.css (the left task-list panel's width divider). Both
+   files are plain global CSS, so the panel divider's `::before` rule (a 3x40px
+   always-visible grey bar) was leaking onto every task bar's resize handle
+   here — that's what looked like a broken/oversized grip no matter how this
+   file's own .gantt-resize-grip was styled. Do not reuse the old name.
+   The hit-zone stays flush inside the bar edge (0 to 8px inward, never poking
+   outside the bar), matching the Planner/Schedule task card's grip pattern.
+   Its background tint is a direct-hover convenience (only lights up when the
+   pointer is right over this 8px sliver), separate from the grip's own
+   reveal below. */
+.gantt-bar-resize-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  background: transparent;
+  cursor: ew-resize !important;
+  transition: background-color 0.2s ease;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.gantt-bar-resize-handle:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.gantt-bar-resize-handle:active {
+  background: rgba(255, 255, 255, 0.25) !important;
+  cursor: ew-resize !important;
+}
+
+.gantt-bar-resize-handle.left {
+  left: 0;
+}
+
+.gantt-bar-resize-handle.right {
+  right: 0;
+}
+
+/* Resize grip - the visible pill inside the hit-zone above. Height 20px reads
+   as "the same height as the bar" (bar is 24px / h-6) while leaving a 2px
+   margin top/bottom so it clears the bar's own rounded corners. Reveal
+   (opacity/scale) is set inline from isBarHovered in GanttChart.tsx, same
+   reasoning as the dependency handle above. */
+.gantt-resize-grip {
+  width: 7px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 1.5px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  transform-origin: center;
+  transition:
+    opacity 0.15s ease,
+    transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+}
+
+/* Task without dates indicator */
+.gantt-task-no-dates {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  cursor: crosshair;
+}
+
+.gantt-task-no-dates:hover {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.dark .gantt-task-no-dates:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.gantt-task-no-dates-hint {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 11px;
+  color: #6b7280;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  pointer-events: none;
+}
+
+.dark .gantt-task-no-dates-hint {
+  background: #1f2937;
+  border-color: #374151;
+  color: #9ca3af;
+}
+
+/* Disable text selection during resize/drag */
+body.gantt-resizing,
+body.gantt-dragging {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+}
+
+body.gantt-resizing *,
+body.gantt-dragging * {
+  cursor: inherit !important;
+}
+
+.gantt-dependency-line-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.gantt-dependency-line-overlay svg,
+.gantt-dependency-lines-overlay svg {
+  width: 100%;
+  height: 100%;
+}
+
+.gantt-dependency-line-overlay line,
+.gantt-dependency-lines-overlay path {
+  mix-blend-mode: normal;
+}
+
+.gantt-dependency-popover {
+  position: fixed;
+  z-index: 10010;
+  min-width: 220px;
+  max-width: 280px;
+  background: #ffffff;
+  color: #111827;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  box-shadow: 0 22px 38px rgba(15, 23, 42, 0.15);
+  padding: 12px 14px;
+}
+
+.dark .gantt-dependency-popover {
+  background: #1f2937;
+  color: #f9fafb;
+  border-color: #374151;
+}
+
+.gantt-dependency-popover h4 {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.gantt-dependency-popover p {
+  margin: 0 8px 10px 0;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.gantt-dependency-popover button {
+  border: none;
+  background: transparent;
+  color: #ef4444;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.gantt-dependency-popover button:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.dark .gantt-dependency-popover button {
+  color: #fca5a5;
+}
+
+.gantt-dependency-lines-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: auto;
+  z-index: 0;
+}
+
+.gantt-dependency-lines-overlay path {
+  cursor: pointer;
+  pointer-events: stroke;
+}
+
+/* Enhanced Phase Bar Styles */
+.gantt-phase-bar {
+  position: relative;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gantt-phase-bar:hover {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+  /* Removed translateY to prevent push-down effect */
+}
+
+/* Phase bar gradient overlay for depth */
+.gantt-phase-bar::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(0, 0, 0, 0.1) 100%
+  );
+  border-radius: 0.5rem;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Text shadow for better readability */
+.text-shadow {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Phase bar hover animation */
+@keyframes phaseBarPulse {
+  0% {
+    box-shadow: 0 4px 12px rgba(var(--phase-color), 0.3);
+  }
+  50% {
+    box-shadow: 0 4px 12px rgba(var(--phase-color), 0.5);
+  }
+  100% {
+    box-shadow: 0 4px 12px rgba(var(--phase-color), 0.3);
+  }
+}
+
+.gantt-phase-bar:hover > div {
+  animation: phaseBarPulse 2s ease-in-out infinite;
+}
+
+/* Phase icon styling removed - no longer used */
+
+/* Progress indicator styling */
+.gantt-phase-progress {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  backdrop-filter: blur(2px);
+}
+
+/* Distinguish phase bars in dark mode */
+.dark .gantt-phase-bar {
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
+}
+
+.dark .gantt-phase-bar:hover {
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
+}
+
+/* Make phase bars more prominent than task bars */
+.gantt-phase-bar > div {
+  position: relative;
+  z-index: 20;
+  border-width: 2px;
+  border-style: solid;
+}
+
+/* Ensure phase bars appear above task bars */
+.gantt-phase-bar {
+  z-index: 15 !important;
+}
+
+/* Task bars should have lower z-index */
+.gantt-task-bar {
+  z-index: 10;
+}
+
+/* Task Preview Hover Effect */
+/* No position rule here on purpose: the element always carries Tailwind's
+   `absolute inset-0` classes in JSX (GanttChart.tsx's dateless-task preview
+   container). This project compiles Tailwind v3 via the classic `@tailwind
+   base/components/utilities` directives (not v4's `@import "tailwindcss"`),
+   so its utilities are NOT wrapped in a CSS `@layer` - confirmed by inspecting
+   the compiled dev-server output, which contains zero `@layer` at-rules. The
+   conflict here is plain cascade source order: this stylesheet is imported by
+   a route-level component (ProjectViewGantt.tsx) and so its <style> tag lands
+   after Tailwind's (injected at the app entry), so at equal specificity
+   (one class each) this file's rule would win. A `position: relative` here
+   would silently downgrade the container from `absolute` to `relative`,
+   collapsing its height to 0 (its only child is itself absolutely positioned,
+   so it contributes no in-flow height) and killing the hover surface for the
+   "+ Set Task Dates" rollover - while clicks kept working because they're
+   bound to the row's own fixed-height wrapper, not this container. */
+
+.gantt-task-preview-tracker {
+  position: absolute;
+  inset: 0;
+  cursor: crosshair;
+}
+
+.gantt-task-preview-bar {
+  z-index: 8;
+}
+
+/* Suppress the "click to add task" rollover on date-less rows while any bar is
+   being dragged/resized/linked elsewhere on the chart - otherwise the cursor
+   sweeping across other rows mid-drag flashes an unrelated "click to add"
+   ghost bar. document.body carries gantt-dragging/gantt-resizing/
+   gantt-dependency-creating for the full mousedown-to-mouseup lifecycle (see
+   handleMouseDown/handleMouseUp/handleDependencyMouseDown in GanttChart.tsx),
+   so gating on those classes covers the whole drag, not just its start. */
+body.gantt-dragging .gantt-task-preview-container,
+body.gantt-resizing .gantt-task-preview-container,
+body.gantt-dependency-creating .gantt-task-preview-container {
+  /* pointer-events: none on the container (not just the .gantt-task-preview-tracker
+     child) also stops the tracker's own onMouseMove from firing at all, which is
+     what drives the "+ Set Task Dates" ghost bar's inline opacity below. */
+  pointer-events: none;
+}
+
+body.gantt-dragging .gantt-task-preview-bar,
+body.gantt-resizing .gantt-task-preview-bar,
+body.gantt-dependency-creating .gantt-task-preview-bar {
+  opacity: 0 !important;
+}
+
+/* The other "add task" affordance: .gantt-row-create-ghost is a SEPARATE
+   element from .gantt-task-preview-bar above - it's the "+ Add Task" ghost
+   shown in a row's empty space next to an EXISTING dated bar (see
+   handleRowHoverMove/showCreateOverlay in GanttChart.tsx), driven by the row's
+   own onMouseMove setting ghost.style.opacity directly rather than CSS :hover.
+   That inline opacity has to be beaten with !important here, same reasoning
+   as the preview-bar override above: while any bar elsewhere is being
+   dragged/resized/linked, the cursor sweeping across other rows must not pop
+   this ghost open. */
+body.gantt-dragging .gantt-row-create-ghost,
+body.gantt-resizing .gantt-row-create-ghost,
+body.gantt-dependency-creating .gantt-row-create-ghost {
+  opacity: 0 !important;
+}
+
+.gantt-scroll-container {
+  position: relative;
+}
+
+/* Firefox scrollbar */
+.gantt-scroll-container {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(155, 155, 155, 0.5) transparent;
+}
+
+/* Webkit browsers (Chrome, Safari, Edge) scrollbar */
+.gantt-scroll-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.gantt-scroll-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.gantt-scroll-container::-webkit-scrollbar-thumb {
+  background-color: rgba(155, 155, 155, 0.5);
+  border-radius: 4px;
+}
+
+.gantt-scroll-container::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(155, 155, 155, 0.7);
+}
+
+/* Dark mode scrollbar */
+[data-theme="dark"] .gantt-scroll-container {
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+[data-theme="dark"] .gantt-scroll-container::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="dark"] .gantt-scroll-container::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}

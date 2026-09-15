@@ -1,0 +1,14 @@
+{
+  "uploadError": "Mund të ngarkoni vetëm skedarë JPG/PNG!",
+  "uploadSizeError": "Imazhi duhet të jetë më i vogël se 2MB!",
+  "upload": "Ngarko",
+  "nameLabel": "Emri",
+  "nameRequiredError": "Emri është i detyrueshëm",
+  "emailLabel": "Email",
+  "emailRequiredError": "Email-i është i detyrueshëm",
+  "saveChanges": "Ruaj Ndryshimet",
+  "profileJoinedText": "U bashkua më {{date}}",
+  "profileLastUpdatedText": "Përditësuar më {{date}}",
+  "avatarTooltip": "Klikoni për të ngarkuar një avatar",
+  "title": "Cilësimet e Profilit"
+}

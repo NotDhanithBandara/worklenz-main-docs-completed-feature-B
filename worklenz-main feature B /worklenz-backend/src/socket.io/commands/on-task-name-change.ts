@@ -1,0 +1,83 @@
+import {Server, Socket} from "socket.io";
+import db from "../../config/db";
+import {NotificationsService} from "../../services/notifications/notifications.service";
+import {SocketEvents} from "../events";
+
+import {getLoggedInUserIdFromSocket, notifyProjectUpdates} from "../util";
+import {getTaskDetails, logNameChange} from "../../services/activity-logs/activity-logs.service";
+import { ExternalNotificationsService } from "../../services/external-notifications.service";
+import { log_error, sanitizePlainText } from "../../shared/utils";
+import {verifyNonGuestTaskAccessSocket, logUnauthorizedSocketAccess} from "../authorization";
+import {isTaskCreationRestrictedForTask} from "../../shared/task-creation-restriction";
+
+export async function on_task_name_change(_io: Server, socket: Socket, data?: string) {
+  try {
+    const body = JSON.parse(data as string);
+
+    const hasAccess = await verifyNonGuestTaskAccessSocket(socket, body.task_id);
+    if (!hasAccess) {
+      logUnauthorizedSocketAccess(socket, 'TASK_NAME_CHANGE', 'task', body.task_id);
+      return;
+    }
+
+    const userId = getLoggedInUserIdFromSocket(socket);
+
+    // Enforce restrict_task_creation: restricted users cannot modify tasks.
+    if (await isTaskCreationRestrictedForTask(userId, body.task_id)) {
+      return;
+    }
+    const name = sanitizePlainText(body.name || "");
+    const task_data = await getTaskDetails(body.task_id, "name");
+    const q = `SELECT handle_task_name_change($1, $2, $3) AS response;`;
+    const result = await db.query(q, [body.task_id, name, userId]);
+    const [d] = result.rows;
+    const response = d.response || {};
+    for (const member of response.members || []) {
+      if (member.user_id === userId) continue;
+      NotificationsService.createNotification({
+        userId: member.user_id,
+        teamId: member.team_id,
+        socketId: member.socket_id,
+        message: response.message,
+        taskId: body.task_id,
+        projectId: response.project_id
+      });
+    }
+
+    socket.emit(SocketEvents.TASK_NAME_CHANGE.toString(), {
+      id: body.task_id,
+      parent_task: body.parent_task,
+      name: response.name
+    });
+    notifyProjectUpdates(socket, body.task_id);
+
+    logNameChange({
+      task_id: body.task_id,
+      socket,
+      new_value: response?.name,
+      old_value: task_data?.name
+    });
+
+    // Send external notifications (Slack, Teams)
+    try {
+      const userQuery = `SELECT name FROM users WHERE id = $1`;
+      const userResult = await db.query(userQuery, [userId]);
+      const userName = userResult.rows[0]?.name || "Unknown User";
+
+      if (response.project_id) {
+        await ExternalNotificationsService.sendExternalNotifications(
+          response.project_id,
+          body.task_id,
+          "task_updated",
+          userName
+        );
+      }
+    } catch (notifError) {
+      log_error("Error sending external notifications:", notifError);
+      // Don't throw - continue even if notifications fail
+    }
+
+  } catch (error) {
+    log_error(error);
+  }
+}

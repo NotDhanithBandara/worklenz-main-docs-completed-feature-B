@@ -1,0 +1,141 @@
+import { IUser } from '../auth/login.types';
+import { ITaskLabel } from '../label.type';
+import { IProject } from '../project/project.types';
+import { IProjectMember } from '../project/projectMember.types';
+import { InlineMember } from '../teamMembers/inlineMember.types';
+import { ITeamMember } from '../teamMembers/teamMember.types';
+import { ISubTask } from './subTask.types';
+import { ITaskPhase } from './taskPhase.types';
+import { ITaskPriority } from './taskPriority.types';
+import { ITaskStatus } from './taskStatus.types';
+
+export interface ITaskCustomColumnSelectionOption {
+  selection_id: string;
+  selection_name: string;
+  selection_color: string;
+}
+
+export interface ITaskCustomColumnLabelOption {
+  label_id: string;
+  label_name: string;
+  label_color: string;
+}
+
+export interface ITaskCustomColumnConfig {
+  fieldType?: string;
+  fieldTitle?: string;
+  numberType?: string | null;
+  decimals?: number | null;
+  label?: string | null;
+  labelPosition?: 'left' | 'right' | null;
+  previewValue?: number | null;
+  expression?: string | null;
+  firstNumericColumnKey?: string | null;
+  secondNumericColumnKey?: string | null;
+  selectionsList?: ITaskCustomColumnSelectionOption[];
+  labelsList?: ITaskCustomColumnLabelOption[];
+}
+
+export interface ITaskCustomColumn {
+  id: string;
+  key: string;
+  name: string;
+  width?: number;
+  pinned?: boolean;
+  custom_column?: boolean;
+  custom_column_obj?: ITaskCustomColumnConfig;
+}
+
+export type ITaskCustomColumnValue = string | number | boolean | string[] | null;
+
+export interface ITaskAssignee {
+  team_member_id: any;
+  id: string;
+  project_member_id: string;
+  name: string;
+}
+
+export interface ITask {
+  id: string;
+  name: string;
+  description: string;
+  status_id: string;
+  // Populated by tasks-list/board/kanban slices, which normalize `priority_id`
+  // into this field client-side. NOT populated by the task drawer's own fetch
+  // (get_task_form_view_model only returns priority_id) — for taskFormViewModel.task,
+  // read priority_id instead. See #1902.
+  priority: string;
+  // The raw priority id. Always populated when the task comes from the task
+  // drawer's fetch (get_task_form_view_model); not populated by the
+  // tasks-list/board/kanban slices, which normalize it into `priority` above.
+  priority_id?: string;
+  start_date: string;
+  end_date: string;
+  due_time: string;
+  total_hours: number;
+  total_minutes: number;
+  billable: boolean;
+  phase_id: string;
+  parent_task_id: string | null;
+  project_id: string;
+  team_id: string;
+  task_key: string;
+  labels: ITaskLabel[];
+  assignees: string[];
+  names: string[];
+  sub_tasks_count: number;
+  manual_progress: boolean;
+  progress_value: number | null;
+  weight: number | null;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface IProjectMemberViewModel extends IProjectMember {
+  name?: string;
+  team_member_id?: string;
+  job_title?: string;
+  email?: string;
+  avatar_url?: string;
+  color_code?: string;
+}
+
+export interface ITaskViewModel extends ITask {
+  created_from_now?: string;
+  updated_from_now?: string;
+  reporter?: string;
+  is_sub_task?: boolean;
+  status_color?: string;
+  status_color_dark?: string;
+  attachments_count?: number;
+  complete_ratio?: number;
+  assignee_names?: InlineMember[];
+  task_labels?: ITaskLabel[];
+  timer_start_time?: number;
+  recurring?: boolean;
+  task_level?: number;
+  schedule_id?: string | null;
+  custom_column_values?: Record<string, ITaskCustomColumnValue>;
+}
+
+export interface ITaskTeamMember extends ITeamMember {
+  name?: string;
+  color_code?: string;
+  avatar_url?: string;
+  email?: string;
+}
+
+export interface ITaskFormViewModel {
+  task?: ITaskViewModel;
+  priorities?: ITaskPriority[];
+  projects?: IProject[];
+  statuses?: ITaskStatus[];
+  phases?: ITaskPhase[];
+  team_members?: ITaskTeamMember[];
+  custom_columns?: ITaskCustomColumn[];
+}
+
+export interface IHomeTaskViewModel extends ITask {
+  task?: ITaskViewModel;
+  team_member_id?: string;
+}

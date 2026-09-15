@@ -1,0 +1,208 @@
+{
+  "chartView": "Pamja e grafik\u00ebve",
+  "calendarView": "Pamja e kalendarit",
+  "tableView": "Pamja e tabel\u00ebs",
+  "noWorkloadData": "Nuk ka t\u00eb dh\u00ebna p\u00ebr ngarkes\u00ebn e pun\u00ebs",
+  "noMembersFound": "Nuk u gjet\u00ebn an\u00ebtar\u00eb t\u00eb ekipit",
+  "errorLoadingData": "Gabim n\u00eb ngarkimin e t\u00eb dh\u00ebnave t\u00eb ngarkes\u00ebs s\u00eb pun\u00ebs",
+  "retry": "Provo p\u00ebrs\u00ebri",
+  "refreshData": "Rifresko t\u00eb dh\u00ebnat",
+
+  "overview": {
+    "teamMembers": "An\u00ebtar\u00ebt e ekipit",
+    "teamMembersTooltip": {
+      "title": "Kompozicioni i ekipit dhe statusi i caktimit",
+      "memberStatusLabel": "Statusi i an\u00ebtarit:",
+      "totalMembersLabel": "Gjithsej an\u00ebtar\u00eb:",
+      "overallocatedLabel": "Mbi ngarkes\u00eb:",
+      "underutilizedLabel": "N\u00eb p\u00ebrdorim t\u00eb ul\u00ebt:",
+      "optimalLabel": "Optimale:"
+    },
+    "totalWorkload": "Ngarkesa totale e pun\u00ebs",
+    "totalWorkloadTooltip": {
+      "title": "Ngarkesa totale e vler\u00ebsuar e pun\u00ebs s\u00eb gjith\u00eb an\u00ebtar\u00ebve t\u00eb ekipit",
+      "includesLabel": "P\u00ebrfshin:",
+      "estimatedHoursLabel": "Or\u00eb t\u00eb vler\u00ebsuara:",
+      "actualHoursLoggedLabel": "Or\u00eb aktualisht të regjistruara:",
+      "progressLabel": "P\u00ebrparimi:"
+    },
+    "hours": "or\u00eb",
+    "averageUtilization": "Shfryt\u00ebzimi mesatar",
+    "averageUtilizationTooltip": {
+      "averageLabel": "Mesatarja:",
+      "membersLabel": "An\u00ebtar\u00eb:",
+      "totalAssignedLabel": "Total i caktuar:",
+      "totalCapacityLabel": "Kapaciteti total:"
+    },
+    "criticalTasks": "Detyra kritike",
+    "criticalTasksTooltip": {
+      "criticalTasksLabel": "Detyra kritike:",
+      "totalTasksLabel": "Gjithsej detyra:",
+      "criticalPercentageLabel": "P\u00ebrqindja kritike:"
+    },
+    "totalTasks": "{{count}} detyra gjithsej"
+  },
+
+  "chart": {
+    "capacity": "Kapaciteti",
+    "allocated": "I caktuar",
+    "utilization": "Shfryt\u00ebzimi",
+    "barChart": "Grafiku me shtylla",
+    "comparison": "Krahasim",
+    "sortByName": "Rendit sipas emrit",
+    "sortByWorkload": "Rendit sipas ngarkes\u00ebs s\u00eb pun\u00ebs",
+    "sortByUtilization": "Rendit sipas shfryt\u00ebzimit",
+    "memberDetails": "Detajet e an\u00ebtarit"
+  },
+
+  "calendar": {
+    "tasks": "detyra",
+    "more": "m\u00eb shum\u00eb",
+    "totalTasks": "{{count}} detyra",
+    "totalHours": "{{hours}} or\u00eb",
+    "dayDetails": "Detajet p\u00ebr {{date}}",
+    "utilization": "Shfryt\u00ebzimi",
+    "assignedTasks": "Detyra t\u00eb caktuara",
+    "teamAvailability": "Disponueshm\u00ebria e ekipit",
+    "noTasksScheduled": "Nuk ka detyra t\u00eb planifikuara p\u00ebr k\u00ebt\u00eb dit\u00eb",
+    "taskSummary": "P\u00ebrmbledhja e detyrave",
+    "task": "Detyr\u00eb",
+    "tasks_plural": "Detyra",
+    "member": "An\u00ebtar",
+    "members_plural": "An\u00ebtar\u00eb",
+    "logged": "regjistruar",
+    "planned": "planifikuar",
+    "unscheduled": "E paplanifikuar",
+    "hoursAssigned": "{{hours}} or\u00eb t\u00eb caktuara",
+    "capacityHours": "{{hours}} or\u00eb kapacitet",
+    "unknownMember": "I panjohur",
+    "currentProject": "Projekti aktual",
+    "unknownInitial": "P",
+    "defaultPriority": "Mesatar",
+    "defaultStatus": "N\u00eb progres"
+  },
+
+  "table": {
+    "member": "An\u00ebtar",
+    "capacity": "Kapaciteti",
+    "dailyCapacityLabel": "Kapaciteti dit\u00ebror (or\u00eb)",
+    "allocated": "I caktuar",
+    "utilization": "Shfryt\u00ebzimi",
+    "status": "Statusi",
+    "assignedTasks": "Detyra t\u00eb caktuara",
+    "tasks": "detyra",
+    "actions": "Veprimet",
+    "totalMembers": "Gjithsej: {{total}} an\u00ebtar\u00eb",
+    "taskName": "Emri i detyr\u00ebs",
+    "project": "Projekti",
+    "duration": "Koh\u00ebzgjatja",
+    "estimatedHours": "Or\u00eb t\u00eb vler\u00ebsuara",
+    "priority": "Prioriteti",
+    "progress": "P\u00ebrparimi",
+    "noStart": "Pa fillim",
+    "noEnd": "Pa fund",
+    "currentProject": "Projekti aktual",
+    "unknown": "I panjohur",
+    "defaultPriority": "Mesatar",
+    "defaultStatus": "P\u00ebr t\u00eb filluar",
+    "hours": "or\u00eb",
+    "currentCapacityLabel": "Kapaciteti aktual:",
+    "allocatedLabel": "I caktuar:",
+    "utilizationLabel": "Shfryt\u00ebzimi:",
+    "statusLabel": "Statusi:"
+  },
+
+  "export": {
+    "taskName": "Emri i detyr\u00ebs",
+    "startDate": "Data e fillimit",
+    "endDate": "Data e mbarimit",
+    "priority": "Prioriteti",
+    "status": "Statusi",
+    "progress": "P\u00ebrparimi (%)",
+    "memberLabel": "An\u00ebtar:",
+    "emailLabel": "E-mail:",
+    "capacityLabel": "Kapaciteti:",
+    "allocatedLabel": "I caktuar:",
+    "utilizationLabel": "Shfryt\u00ebzimi:",
+    "statusLabel": "Statusi:"
+  },
+
+  "status": {
+    "overallocated": "Mbi ngarkes\u00eb",
+    "underutilized": "N\u00eb p\u00ebrdorim t\u00eb ul\u00ebt",
+    "optimal": "Optimale"
+  },
+
+  "actions": {
+    "viewDetails": "Shiko detajet",
+    "adjustCapacity": "Rregullo kapacitetin",
+    "reassignTasks": "Ricakto detyrat",
+    "exportWorkload": "Eksporto ngarkes\u00ebn e pun\u00ebs",
+    "reassign": "Ricakto"
+  },
+
+  "modal": {
+    "reassignTask": "Ricakto detyr\u00ebn",
+    "task": "Detyr\u00eb",
+    "currentAssignee": "P\u00ebrgjegj\u00ebsi aktual"
+  },
+
+  "filters": {
+    "title": "Filtrat e ngarkes\u00ebs s\u00eb pun\u00ebs",
+    "filters": "Filtrat",
+    "timeScale": "Shkalla kohore",
+    "daily": "Ditor",
+    "weekly": "Javore",
+    "monthly": "Mujore",
+    "workingDays": "Dit\u00ebt e pun\u00ebs",
+    "workingHoursPerDay": "Or\u00ebt e pun\u00ebs n\u00eb dit\u00eb",
+    "monday": "E h\u00ebn\u00eb",
+    "tuesday": "E mart\u00eb",
+    "wednesday": "E m\u00ebrkur\u00eb",
+    "thursday": "E enjte",
+    "friday": "E premte",
+    "saturday": "E shtun\u00eb",
+    "sunday": "E diel",
+    "showWeekends": "Shiko fundjavat",
+    "showOverallocated": "Shiko vet\u00ebm mbi ngarkes\u00eb",
+    "showUnderutilized": "Shiko vet\u00ebm n\u00eb p\u00ebrdorim t\u00eb ul\u00ebt",
+    "clearAll": "Pastro t\u00eb gjith\u00eb filtrat",
+    "dateRanges": "Intervallet e datave",
+    "today": "Sot",
+    "yesterday": "Dje",
+    "thisWeek": "K\u00ebt\u00eb jav\u00eb",
+    "lastWeek": "Jav\u00ebn e kaluar",
+    "thisMonth": "K\u00ebt\u00eb muaj",
+    "lastMonth": "Muajin e kaluar",
+    "thisQuarter": "K\u00ebt\u00eb tremujor",
+    "last7Days": "7 dit\u00ebt e fundit",
+    "last30Days": "30 dit\u00ebt e fundit",
+    "last90Days": "90 dit\u00ebt e fundit",
+    "custom": "Interval personalizuar",
+    "refresh": "Rifresko",
+    "export": "Eksporto",
+    "settings": "Cil\u00ebsimet"
+  },
+
+  "common": {
+    "cancel": "Anulo",
+    "save": "Ruaj",
+    "close": "Mbyll",
+    "enterCapacityValue": "Ju lutemi shkruani nj\u00eb vler\u00eb kapaciteti",
+    "capacityRangeError": "Duhet t\u00eb jet\u00eb midis 1 dhe 24 or\u00ebve"
+  },
+
+  "calculations": {
+    "utilizationFormula": "Shfryt\u00ebzimi = (Or\u00ebt e caktuara \u00f7 Kapaciteti javore) \u00d7 100",
+    "weeklyCapacityFormula": "Kapaciteti javor = Or\u00ebt ditore \u00d7 Dit\u00ebt e pun\u00ebs n\u00eb jav\u00eb",
+    "utilizationTooltip": "{{utilization}}% shfryt\u00ebzimi\n\nLlogaritje:\n\u2022 Or\u00eb t\u00eb caktuara: {{assignedHours}}h\n\u2022 Kapaciteti javor: {{weeklyCapacity}}h ({{dailyHours}}h \u00d7 {{workingDays}} dit\u00eb)\n\u2022 Formula: ({{assignedHours}} \u00f7 {{weeklyCapacity}}) \u00d7 100 = {{utilization}}%",
+    "capacityTooltip": "Kapaciteti javor: {{weeklyCapacity}} or\u00eb\n\nBazuar n\u00eb cil\u00ebsimet e organizat\u00ebs:\n\u2022 Or\u00eb ditore: {{dailyHours}}h\n\u2022 Dit\u00ebt e pun\u00ebs: {{workingDays}} n\u00eb jav\u00eb\n\u2022 Formula: {{dailyHours}}h \u00d7 {{workingDays}} dit\u00eb = {{weeklyCapacity}}h",
+    "statusTooltip": {
+      "overallocated": "Mbi ngarkes\u00eb (>100% shfryt\u00ebzimi)\n\nKy an\u00ebtar ka m\u00eb shum\u00eb pun\u00eb t\u00eb caktuar se sa kapaciteti i tij i disponuesh\u00ebm. Konsideroni rishp\u00ebrndarjen e detyrave ose rregullimin e kapacitetit.",
+      "underutilized": "N\u00eb p\u00ebrdorim t\u00eb ul\u00ebt (<{{threshold}}% shfryt\u00ebzimi)\n\nKy an\u00ebtar ka kapacitet p\u00ebr pun\u00eb shtes\u00eb. Konsideroni caktimin e m\u00e9 shum\u00eb detyrave p\u00ebr t\u00eb optimizuar p\u00ebrdorimin e burimeve.",
+      "optimal": "Shfryt\u00ebzim optimal ({{threshold}}-100%)\n\nKy an\u00ebtar ka nj\u00eb balanc\u00eb t\u00eb sh\u00ebndosh\u00eb nd\u00ebrmjet detyrave t\u00eb caktuara dhe kapacitetit t\u00eb disponuesh\u00ebm."
+    },
+    "workingDaysInfo": "Dit\u00ebt e pun\u00ebs bazuar n\u00eb orarin e organizat\u00ebs:\n{{workingDaysList}}",
+    "averageUtilizationTooltip": "Mesatarja e ekipit: {{average}}%\n\nLlogaritur nga {{memberCount}} an\u00ebtar\u00eb t\u00eb ekipit:\n\u2022 Total or\u00eb t\u00eb caktuara: {{totalAssigned}}h\n\u2022 Kapaciteti total i ekipit: {{totalCapacity}}h\n\u2022 Formula: ({{totalAssigned}} \u00f7 {{totalCapacity}}) \u00d7 100 = {{average}}%"
+  }
+}
